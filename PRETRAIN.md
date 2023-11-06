@@ -4,7 +4,7 @@
 We expect you have CUDA 11.8 installed.
 #### Install Pytorch Nightly.
 ```bash
-pip install --index-url https://download.pytorch.org/whl/nightly/cu118 --pre 'torch>=2.1.0dev'
+pip install --index-url https://download.pytorch.org/whl/nightly/cu118 --pre 'torch==2.1.0dev'
 ```
 #### Build XFormers from Source
 Note: as of 2023/09/02, xformers does not provide pre-built binaries for torch 2.1. You have to build it from source.
@@ -18,6 +18,7 @@ pip install -v -U git+https://github.com/facebookresearch/xformers.git@main#egg=
 ```bash
 git clone https://github.com/Dao-AILab/flash-attention
 cd flash-attention
+pip install packaging
 python setup.py install
 cd csrc/rotary && pip install .
 cd ../layer_norm && pip install .
@@ -79,3 +80,14 @@ lightning run model \
 ```
 You can follow [these instructions](https://lightning.ai/docs/fabric/stable/guide/multi_node/slurm.html) if you have a slurm cluster.
 
+### Pretraining with wikitext
+
+```
+lightning run model \
+    --node-rank=0  \
+    --main-address=172.16.101.5 \
+    --accelerator=cuda \
+    --devices=1 \
+    --num-nodes=1 \
+    pretrain/tinyllama.py --devices 1 --train_data_dir data/wikitext  --val_data_dir data/wikitext --use_wikitext True
+```

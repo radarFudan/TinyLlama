@@ -23,6 +23,8 @@ from pytorch_lightning.loggers import WandbLogger
 from lit_gpt import FusedCrossEntropyLoss
 import random
 
+from dataloading import create_wikitext_dataset
+
 model_name = "tiny_LLaMA_1b"
 name = "tinyllama_1b"
 out_dir = Path("out") / name
@@ -82,6 +84,7 @@ def setup(
     precision: Optional[str] = None,
     tpu: bool = False,
     resume: Union[bool, Path] = False,
+    use_wikitext: bool = False, 
 ) -> None:
     precision = precision or get_default_supported_precision(training=True, tpu=tpu)
 
@@ -104,10 +107,10 @@ def setup(
     fabric = L.Fabric(devices=devices, strategy=strategy, precision=precision, loggers=[logger, wandb_logger])
     fabric.print(hparams)
     #fabric.launch(main, train_data_dir, val_data_dir, resume)
-    main(fabric, train_data_dir, val_data_dir, resume)
+    main(fabric, train_data_dir, val_data_dir, resume, use_wikitext)
 
 
-def main(fabric, train_data_dir, val_data_dir, resume):
+def main(fabric, train_data_dir, val_data_dir, resume, use_wikitext):
     monitor = Monitor(fabric, window_size=2, time_unit="seconds", log_iter_interval=log_iter_interval)
 
     if fabric.global_rank == 0:
@@ -115,18 +118,21 @@ def main(fabric, train_data_dir, val_data_dir, resume):
 
     config = Config.from_name(model_name)
 
-    train_dataloader, val_dataloader = create_dataloaders(
-        batch_size=micro_batch_size,
-        block_size=config.block_size,
-        fabric=fabric,
-        train_data_dir=train_data_dir,
-        val_data_dir=val_data_dir,
-        seed=3407,
-    )
-    if val_dataloader is None:
-        train_dataloader = fabric.setup_dataloaders(train_dataloader)
+    if use_wikitext:
+        train_dataloader, val_dataloader, _ = create_wikitext_dataset(config)
     else:
-        train_dataloader, val_dataloader = fabric.setup_dataloaders(train_dataloader, val_dataloader)
+        train_dataloader, val_dataloader = create_dataloaders(
+            batch_size=micro_batch_size,
+            block_size=config.block_size,
+            fabric=fabric,
+            train_data_dir=train_data_dir,
+            val_data_dir=val_data_dir,
+            seed=3407,
+        )
+        if val_dataloader is None:
+            train_dataloader = fabric.setup_dataloaders(train_dataloader)
+        else:
+            train_dataloader, val_dataloader = fabric.setup_dataloaders(train_dataloader, val_dataloader)
 
     fabric.seed_everything(3407)  # same seed for every process to init model (FSDP)
 

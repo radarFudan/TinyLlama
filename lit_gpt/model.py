@@ -153,7 +153,9 @@ class Block(nn.Module):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.norm_1 = config.norm_class(config.n_embd, eps=config.norm_eps)
+
         self.attn = CausalSelfAttention(config)
+        
         if not config.shared_attention_norm:
             self.norm_2 = config.norm_class(config.n_embd, eps=config.norm_eps)
         self.mlp = config.mlp_class(config)
@@ -291,6 +293,36 @@ class CausalSelfAttention(nn.Module):
             q, k, v, attn_mask=mask, dropout_p=0.0, scale=scale, is_causal=mask is None
         )
         return y.transpose(1, 2)
+
+
+class CausalSSM(nn.Module):
+    def __init__(self, config: Config) -> None:
+        super().__init__()
+        shape = (config.n_head + 2 * config.n_query_groups) * config.head_size
+        # key, query, value projections for all heads, but in a batch
+        self.attn = nn.Linear(config.n_embd, shape, bias=config.bias)
+        # output projection
+        self.proj = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
+
+        self.config = config
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        rope: RoPECache,
+        max_seq_length: int,
+        mask: Optional[torch.Tensor] = None,
+        input_pos: Optional[torch.Tensor] = None,
+        kv_cache: Optional[KVCache] = None,
+    ) -> Tuple[torch.Tensor, Optional[KVCache]]:
+        B, T, C = x.size()  # batch size, sequence length, embedding dimensionality (n_embd)
+
+        y = x.reshape(B, T, C)
+
+        # output projection
+        y = self.proj(y)
+
+        return y, kv_cache
 
 
 class GptNeoxMLP(nn.Module):
