@@ -23,15 +23,19 @@ from pytorch_lightning.loggers import WandbLogger
 from lit_gpt import FusedCrossEntropyLoss
 import random
 
-model_name = "tiny_LLaMA_1b"
-name = "tinyllama_1b"
+# model_name = "tiny_LLaMA_1b"
+# name = "tinyllama_1b"
+model_name = "tiny_LLaMA_120M"
+name = "tinyllama_120m"
 out_dir = Path("out") / name
 
 # Hyperparameters
-num_of_devices = 8
+# num_of_devices = 8
+num_of_devices = 2
 global_batch_size = 512
 learning_rate = 4e-4
-micro_batch_size = 8
+# micro_batch_size = 8
+micro_batch_size = 32
 max_step = 715256 * 2
 warmup_steps = 2000
 log_step_interval = 10
@@ -61,22 +65,30 @@ log_iter_interval = log_step_interval * gradient_accumulation_steps
 
 
 # Treat all dataset equally by their size. If you want to use a different weight for a dataset, add it to the list with the weight.
+# train_data_config = [
+#     ("train_slim", 0.693584),
+#     ("train_star", 0.306416),
+# ]
+
+# val_data_config = [
+#     ("validation", 1.0),
+# ]
 train_data_config = [
-    ("train_slim", 0.693584),
-    ("train_star", 0.306416),
+    ("train_ind", 1.0),
 ]
 
 val_data_config = [
-    ("validation", 1.0),
+    ("train_ind", 1.0),
 ]
 
 hparams = {k: v for k, v in locals().items() if isinstance(v, (int, float, str)) and not k.startswith("_")}
 logger = step_csv_logger("out", name, flush_logs_every_n_steps=log_iter_interval)
-wandb_logger = WandbLogger()
+wandb_logger = WandbLogger(name="tiny_llama_120M_baseline", id="debug_id", project="TL3")
 
 
 def setup(
-    devices: int = 8,
+    # devices: int = 8,
+    devices: int = 2,
     train_data_dir: Path = Path("data/redpajama_sample"),
     val_data_dir: Optional[Path] = None,
     precision: Optional[str] = None,
@@ -226,6 +238,10 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
             fabric.backward(loss / gradient_accumulation_steps)
 
         if not is_accumulating:
+            total_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip)
+            # Print the gradient norm
+            print("Gradient norm: ", total_norm)
+
             fabric.clip_gradients(model, optimizer, max_norm=grad_clip)
             optimizer.step()
             optimizer.zero_grad()

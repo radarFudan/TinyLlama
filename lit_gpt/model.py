@@ -18,6 +18,7 @@ RoPECache = Tuple[torch.Tensor, torch.Tensor]
 KVCache = Tuple[torch.Tensor, torch.Tensor]
 FlashAttention2Available = RequirementCache("flash-attn>=2.0.0.post1")
 
+from lit_gpt.associative_scan import associative_scan, nested_func
 
 class GPT(nn.Module):
     def __init__(self, config: Config) -> None:
@@ -293,6 +294,40 @@ class CausalSelfAttention(nn.Module):
         return y.transpose(1, 2)
 
 
+class SSM_Hyena(nn.Module):
+    """
+    SSM is recurrent by construction, therefore it's causal. 
+    """
+    def __init__(self, config: Config) -> None:
+        super().__init__()
+        self.lambdas = nn.Linear(config.n_embd, bias=config.bias)
+        # output projection
+        self.proj = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
+
+        self.config = config
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        rope: RoPECache,
+        max_seq_length: int,
+        mask: Optional[torch.Tensor] = None,
+        input_pos: Optional[torch.Tensor] = None,
+        kv_cache: Optional[KVCache] = None,
+    ) -> Tuple[torch.Tensor, Optional[KVCache]]:
+        B, T, C = x.size()  # batch size, sequence length, embedding dimensionality (n_embd)
+
+        y = x
+        # Implement a linear RNN first. 
+        # Then add the hyena order. 
+        y = associative_scan(nested_func, (y, self.lambdas)) 
+
+        # output projection
+        y = self.proj(y)
+
+        return y, kv_cache
+
+
 class GptNeoxMLP(nn.Module):
     def __init__(self, config: Config) -> None:
         super().__init__()
@@ -356,3 +391,5 @@ def apply_rope(x: torch.Tensor, cos: torch.Tensor, sin: torch.Tensor) -> torch.T
     rotated = torch.cat((-x2, x1), dim=-1)  # (B, nh, T, hs)
     roped = (x * cos) + (rotated * sin)
     return roped.type_as(x)
+
+
