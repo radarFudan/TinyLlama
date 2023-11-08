@@ -154,7 +154,16 @@ class Block(nn.Module):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.norm_1 = config.norm_class(config.n_embd, eps=config.norm_eps)
-        self.attn = CausalSelfAttention(config)
+
+        if config.time_mixer == "attention":
+            print("Using attention mixer")
+            self.attn = CausalSelfAttention(config)
+        elif config.time_mixer == "ssm":
+            print("Using SSM mixer")
+            self.attn = SSM_Hyena(config)
+        else:
+            raise NotImplementedError(f"Time mixer {config.time_mixer} not implemented")
+
         if not config.shared_attention_norm:
             self.norm_2 = config.norm_class(config.n_embd, eps=config.norm_eps)
         self.mlp = config.mlp_class(config)
@@ -300,7 +309,8 @@ class SSM_Hyena(nn.Module):
     """
     def __init__(self, config: Config) -> None:
         super().__init__()
-        self.lambdas = nn.Linear(config.n_embd, bias=config.bias)
+        # self.lambdas = nn.Linear(config.n_embd, bias=config.bias)
+        self.lambdas = nn.Parameter(torch.randn(config.n_embd))
         # output projection
         self.proj = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
 
@@ -317,15 +327,21 @@ class SSM_Hyena(nn.Module):
     ) -> Tuple[torch.Tensor, Optional[KVCache]]:
         B, T, C = x.size()  # batch size, sequence length, embedding dimensionality (n_embd)
 
-        y = x
         # Implement a linear RNN first. 
         # Then add the hyena order. 
-        y = associative_scan(nested_func, (y, self.lambdas)) 
+        Lambda_elements = self.lambdas * torch.ones(1, T, C).to(self.lambdas.device)
+
+        # print("x's shape is", x.shape)
+        # print("Lambda_elements's shape is", Lambda_elements.shape)
+        _, y = associative_scan(nested_func, (Lambda_elements, x), axis=1) 
 
         # output projection
         y = self.proj(y)
 
         return y, kv_cache
+    
+    def reset_parameters(self) -> None:
+        pass
 
 
 class GptNeoxMLP(nn.Module):

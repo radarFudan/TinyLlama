@@ -49,6 +49,7 @@ class Config:
     _mlp_class: Literal["GptNeoxMLP", "LLaMAMLP"] = "GptNeoxMLP"
     intermediate_size: Optional[int] = None
     condense_ratio: int = 1
+    time_mixer: str = None,
 
     def __post_init__(self):
         # error checking
@@ -280,6 +281,26 @@ tiny_LLaMA = [
         _mlp_class="LLaMAMLP",
         intermediate_size=2048,
         n_query_groups=1,
+        time_mixer="attention",
+    ),
+    dict(
+        org="StatNLP-research",
+        name="tiny_LLaMA_120M_SSM",
+        block_size=2048,
+        vocab_size=32000,
+        padding_multiple=64,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=2048,
+        n_query_groups=1,
+        time_mixer="ssm",
     ),
     dict(
         org="StatNLP-research",

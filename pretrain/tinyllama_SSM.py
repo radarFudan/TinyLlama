@@ -25,8 +25,8 @@ import random
 
 # model_name = "tiny_LLaMA_1b"
 # name = "tinyllama_1b"
-model_name = "tiny_LLaMA_120M"
-name = "tinyllama_120m"
+model_name = "tiny_LLaMA_120M_SSM"
+name = "tinyllama_120m_ssm"
 out_dir = Path("out") / name
 
 # Hyperparameters
@@ -83,7 +83,7 @@ val_data_config = [
 
 hparams = {k: v for k, v in locals().items() if isinstance(v, (int, float, str)) and not k.startswith("_")}
 logger = step_csv_logger("out", name, flush_logs_every_n_steps=log_iter_interval)
-wandb_logger = WandbLogger(name="tiny_llama_120M_baseline", id="debug_id", project="TL3", offline=True)
+wandb_logger = WandbLogger(name="tiny_llama_120M_SSM", id="debug_id", project="TL3", offline=True)
 
 
 def setup(
