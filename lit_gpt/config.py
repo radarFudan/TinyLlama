@@ -19,6 +19,8 @@ class Config:
     n_layer: int = 16
     n_head: int = 32
     n_embd: int = 4096
+    n_ssm: int = 4096
+    order: int = 1
     rotary_percentage: float = 0.25
     parallel_residual: bool = True
     bias: bool = True
@@ -285,6 +287,48 @@ tiny_LLaMA = [
     ),
     dict(
         org="StatNLP-research",
+        name="tiny_LLaMA_3b_SSM",
+        block_size=2048,
+        vocab_size=32000,
+        padding_multiple=64,
+        n_layer=26,
+        n_head=32,
+        n_embd=3200,
+        n_ssm=600,
+        order=1,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5, #Llama 2 use 1e-5. Llama 1 use 1e-6
+        _mlp_class="LLaMAMLP",
+        intermediate_size=8640,
+        n_query_groups=4,
+        time_mixer="ssm",
+    ),
+    dict(
+        org="StatNLP-research",
+        name="tiny_LLaMA_1b_SSM", # 927,041,792
+        block_size=2048,
+        vocab_size=32000,
+        padding_multiple=64,
+        n_layer=22,
+        n_head=32,
+        n_embd=2048,
+        n_ssm=384,
+        order=1,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5, #Llama 2 use 1e-5. Llama 1 use 1e-6
+        _mlp_class="LLaMAMLP",
+        intermediate_size=5632,
+        n_query_groups=4,
+        time_mixer="ssm",
+    ),
+    dict(
+        org="StatNLP-research",
         name="tiny_LLaMA_120M_SSM",
         block_size=2048,
         vocab_size=32000,
@@ -292,6 +336,8 @@ tiny_LLaMA = [
         n_layer=12,
         n_head=12,
         n_embd=768,
+        n_ssm=128,
+        order=1,
         rotary_percentage=1.0,
         parallel_residual=False,
         bias=False,

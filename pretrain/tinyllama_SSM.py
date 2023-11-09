@@ -65,14 +65,6 @@ log_iter_interval = log_step_interval * gradient_accumulation_steps
 
 
 # Treat all dataset equally by their size. If you want to use a different weight for a dataset, add it to the list with the weight.
-# train_data_config = [
-#     ("train_slim", 0.693584),
-#     ("train_star", 0.306416),
-# ]
-
-# val_data_config = [
-#     ("validation", 1.0),
-# ]
 train_data_config = [
     ("train_ind", 1.0),
 ]
@@ -83,7 +75,7 @@ val_data_config = [
 
 hparams = {k: v for k, v in locals().items() if isinstance(v, (int, float, str)) and not k.startswith("_")}
 logger = step_csv_logger("out", name, flush_logs_every_n_steps=log_iter_interval)
-wandb_logger = WandbLogger(name="tiny_llama_120M_SSM", id="debug_id", project="TL3", offline=True)
+wandb_logger = WandbLogger(name="tiny_llama_120M_SSM", id="tiny_llama_120M_SSM", project="TL3", offline=True)
 
 
 def setup(

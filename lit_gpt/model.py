@@ -20,6 +20,8 @@ FlashAttention2Available = RequirementCache("flash-attn>=2.0.0.post1")
 
 from lit_gpt.associative_scan import associative_scan, nested_func
 
+import einops
+
 class GPT(nn.Module):
     def __init__(self, config: Config) -> None:
         super().__init__()
@@ -156,10 +158,10 @@ class Block(nn.Module):
         self.norm_1 = config.norm_class(config.n_embd, eps=config.norm_eps)
 
         if config.time_mixer == "attention":
-            print("Using attention mixer")
+            # print("Using attention mixer")
             self.attn = CausalSelfAttention(config)
         elif config.time_mixer == "ssm":
-            print("Using SSM mixer")
+            # print("Using SSM mixer")
             self.attn = SSM_Hyena(config)
         else:
             raise NotImplementedError(f"Time mixer {config.time_mixer} not implemented")
@@ -309,10 +311,13 @@ class SSM_Hyena(nn.Module):
     """
     def __init__(self, config: Config) -> None:
         super().__init__()
-        # self.lambdas = nn.Linear(config.n_embd, bias=config.bias)
-        self.lambdas = nn.Parameter(torch.randn(config.n_embd))
-        # output projection
-        self.proj = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
+        self.lambdas = nn.Parameter(torch.rand(config.order, 1, 1, config.n_ssm))
+
+        # input/output projection
+        self.in_proj = nn.Linear(config.n_embd, config.n_ssm * config.order, bias=config.bias)
+        self.out_proj = nn.Linear(config.n_ssm, config.n_embd, bias=config.bias)
+        self.order = config.order
+        self.n_ssm = config.n_ssm
 
         self.config = config
 
@@ -325,18 +330,25 @@ class SSM_Hyena(nn.Module):
         input_pos: Optional[torch.Tensor] = None,
         kv_cache: Optional[KVCache] = None,
     ) -> Tuple[torch.Tensor, Optional[KVCache]]:
-        B, T, C = x.size()  # batch size, sequence length, embedding dimensionality (n_embd)
+        B, T, _ = x.size()  # batch size, sequence length, embedding dimensionality (n_embd)
+        x = self.in_proj(x) # batch size, sequence length, order * n_ssm. 
+        x = einops.rearrange(x, "b t (o c) -> o b t c", o = self.order, c = self.n_ssm) # order, batch size, sequence length, n_ssm
+        O, _, _, C = x.size()  # order * batch size, sequence length, n_ssm
 
-        # Implement a linear RNN first. 
-        # Then add the hyena order. 
-        Lambda_elements = self.lambdas * torch.ones(1, T, C).to(self.lambdas.device)
+        Lambda_elements = self.lambdas * torch.ones(1, 1, T, 1).to(self.lambdas.device) # O * B * T * C
 
-        # print("x's shape is", x.shape)
-        # print("Lambda_elements's shape is", Lambda_elements.shape)
-        _, y = associative_scan(nested_func, (Lambda_elements, x), axis=1) 
+        y = x[0,:,:,:]
+        
+        assert self.order >= 1
+        for i in range(1, self.order):
+            y = y * x[i, :, :, :] # Then it seems it would be difficult to approximate order one term? 
+
+            # Current associative scan does not have bias term.
+            # TODO
+            _, y = associative_scan(nested_func, (Lambda_elements, y), axis=1) # B * T * (O * C)
 
         # output projection
-        y = self.proj(y)
+        y = self.out_proj(y)
 
         return y, kv_cache
     

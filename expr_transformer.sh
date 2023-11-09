@@ -1,4 +1,3 @@
-
 lightning run model \
     --node-rank=0  \
     --accelerator=cuda \
