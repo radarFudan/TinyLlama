@@ -337,7 +337,7 @@ class SSM_Hyena(nn.Module):
 
         Lambda_elements = self.lambdas * torch.ones(1, 1, T, 1).to(self.lambdas.device) # O * B * T * C
 
-        y = x[0,:,:,:]
+        y = x[0,:,:,:] # B * T * C
         
         assert self.order >= 1
         for i in range(1, self.order):
@@ -345,7 +345,9 @@ class SSM_Hyena(nn.Module):
 
             # Current associative scan does not have bias term.
             # TODO
-            _, y = associative_scan(nested_func, (Lambda_elements, y), axis=1) # B * T * (O * C)
+            _, y = associative_scan(nested_func, (Lambda_elements[i,:,:,:], y), axis=1) # B * T * C
+
+            # TODO, Lambda_elements[0,:,:,:] is not used. 
 
         # output projection
         y = self.out_proj(y)

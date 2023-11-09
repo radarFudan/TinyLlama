@@ -23,25 +23,24 @@ from pytorch_lightning.loggers import WandbLogger
 from lit_gpt import FusedCrossEntropyLoss
 import random
 
-# model_name = "tiny_LLaMA_1b"
-# name = "tinyllama_1b"
-model_name = "tiny_LLaMA_120M_SSM"
-name = "tinyllama_120m_ssm"
+model_name = "tiny_LLaMA_3b_SSM_O2"
+name = "tinyllama_3b_ssm_o2"
+# model_name = "tiny_LLaMA_120M_SSM"
+# name = "tinyllama_120m_ssm"
 out_dir = Path("out") / name
 
 # Hyperparameters
 # num_of_devices = 8
-num_of_devices = 2
+num_of_devices = 1
 global_batch_size = 512
 learning_rate = 4e-4
-# micro_batch_size = 8
-micro_batch_size = 32
-max_step = 715256 * 2
+micro_batch_size = 4
+max_step = 715256
 warmup_steps = 2000
 log_step_interval = 10
 eval_iters = 100
-save_step_interval = 1000
-eval_step_interval = 1000
+save_step_interval = 5000
+eval_step_interval = 5000
 
 
 weight_decay = 1e-1
@@ -75,12 +74,12 @@ val_data_config = [
 
 hparams = {k: v for k, v in locals().items() if isinstance(v, (int, float, str)) and not k.startswith("_")}
 logger = step_csv_logger("out", name, flush_logs_every_n_steps=log_iter_interval)
-wandb_logger = WandbLogger(name="tiny_llama_120M_SSM_O1", id="tiny_llama_120M_SSM_O1", project="TL3", offline=True)
+wandb_logger = WandbLogger(name="tiny_llama_3B_SSM_O2", id="tiny_llama_3B_SSM_O2", project="TL3", offline=True)
 
 
 def setup(
     # devices: int = 8,
-    devices: int = 2,
+    devices: int = 1,
     train_data_dir: Path = Path("data/redpajama_sample"),
     val_data_dir: Optional[Path] = None,
     precision: Optional[str] = None,
