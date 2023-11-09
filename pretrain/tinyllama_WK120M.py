@@ -25,18 +25,23 @@ import random
 
 from dataloading import create_wikitext_dataset
 
-model_name = "tiny_LLaMA_1b"
-name = "tinyllama_1b"
+# model_name = "tiny_LLaMA_1b"
+# name = "tinyllama_1b"
+model_name = "tiny_LLaMA_120M"
+name = "tinyllama_120m"
 out_dir = Path("out") / name
 
 # Hyperparameters
-num_of_devices = 8
-global_batch_size = 512
-learning_rate = 4e-4
-micro_batch_size = 8
-max_step = 715256 * 2
-warmup_steps = 2000
-log_step_interval = 10
+# num_of_devices = 8
+num_of_devices = 1
+global_batch_size = 16
+# learning_rate = 4e-4
+learning_rate = 1e-3
+micro_batch_size = 16
+# max_step = 715256 * 2
+max_step = 115000
+warmup_steps = 1000
+log_step_interval = 50
 eval_iters = 100
 save_step_interval = 5000
 eval_step_interval = 5000
@@ -63,22 +68,25 @@ log_iter_interval = log_step_interval * gradient_accumulation_steps
 
 
 # Treat all dataset equally by their size. If you want to use a different weight for a dataset, add it to the list with the weight.
+# train_data_config = [
+#     ("train_slim", 0.693584),
+#     ("train_star", 0.306416),
+# ]
 train_data_config = [
-    ("train_slim", 0.693584),
-    ("train_star", 0.306416),
+    ("train_ind", 1.0),
 ]
 
 val_data_config = [
-    ("validation", 1.0),
+    ("train_ind", 1.0),
 ]
 
 hparams = {k: v for k, v in locals().items() if isinstance(v, (int, float, str)) and not k.startswith("_")}
 logger = step_csv_logger("out", name, flush_logs_every_n_steps=log_iter_interval)
-wandb_logger = WandbLogger()
+wandb_logger = WandbLogger(name="tiny_llama_120M_wikitext_baseline", id="debug_id", project="TL1", offline=True)
 
 
 def setup(
-    devices: int = 8,
+    devices: int = 1,
     train_data_dir: Path = Path("data/redpajama_sample"),
     val_data_dir: Optional[Path] = None,
     precision: Optional[str] = None,
@@ -119,7 +127,7 @@ def main(fabric, train_data_dir, val_data_dir, resume, use_wikitext):
     config = Config.from_name(model_name)
 
     if use_wikitext:
-        train_dataloader, val_dataloader, _ = create_wikitext_dataset(config)
+        train_dataloader, val_dataloader, _ = create_wikitext_dataset(l_max=1024, data_dir="./data/wikitext", batch_size=1, seed=0)
     else:
         train_dataloader, val_dataloader = create_dataloaders(
             batch_size=micro_batch_size,
@@ -138,7 +146,7 @@ def main(fabric, train_data_dir, val_data_dir, resume, use_wikitext):
 
     fabric.print(f"Loading model with {config.__dict__}")
     t0 = time.perf_counter()
-    with fabric.init_module(empty_init=True):
+    with fabric.init_module(empty_init=(fabric.world_size > 1)):
         model = GPT(config)
         model.apply(partial(model._init_weights ,n_layer=config.n_layer))
  
@@ -201,6 +209,9 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
     curr_iter = 0
             
     loss_func = FusedCrossEntropyLoss()
+    
+    device = "cuda:0"
+    
     for  train_data in train_dataloader:
         # resume loader state. This is not elegant but it works. Should rewrite it in the future.
         if resume:
@@ -222,8 +233,10 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
 
         iter_t0 = time.perf_counter()
 
-        input_ids = train_data[:, 0 : model.config.block_size].contiguous()
-        targets = train_data[:, 1 : model.config.block_size + 1].contiguous()
+        # input_ids = train_data[:, 0 : model.config.block_size].contiguous()
+        # targets = train_data[:, 1 : model.config.block_size + 1].contiguous()
+        input_ids = train_data[0].to(device).contiguous()
+        targets = train_data[1].to(device).contiguous()
         is_accumulating = (state["iter_num"] + 1) % gradient_accumulation_steps != 0
         with fabric.no_backward_sync(model, enabled=is_accumulating):
             logits = model(input_ids)
@@ -232,6 +245,12 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
             fabric.backward(loss / gradient_accumulation_steps)
 
         if not is_accumulating:
+            # Calculate the gradient norm
+            # total_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip)
+
+            # Print the gradient norm
+            # print("Gradient norm: ", total_norm)
+
             fabric.clip_gradients(model, optimizer, max_norm=grad_clip)
             optimizer.step()
             optimizer.zero_grad()
@@ -248,6 +267,7 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
                 f" remaining time: {(t1 - total_t0) / (state['iter_num'] - initial_iter) * (max_iters - state['iter_num']) / 3600:.2f} hours. " 
                 # print days as well
                 f" or {(t1 - total_t0) / (state['iter_num'] - initial_iter) * (max_iters - state['iter_num']) / 3600 / 24:.2f} days. "
+                # f"lr {lr}"
             )
  
         monitor.on_train_batch_end(
@@ -285,13 +305,16 @@ def validate(fabric: L.Fabric, model: torch.nn.Module, val_dataloader: DataLoade
     fabric.print("Validating ...")
     model.eval()
 
+    device = "cuda:0"
     losses = torch.zeros(eval_iters, device=fabric.device)
     for k, val_data in enumerate(val_dataloader):
         if k >= eval_iters:
             break
-        input_ids = val_data[:, 0 : model.config.block_size].contiguous()
-        targets = val_data[:, 1 : model.config.block_size + 1].contiguous()
-        logits = model(input_ids)
+        # input_ids = val_data[:, 0 : model.config.block_size].contiguous()
+        # targets = val_data[:, 1 : model.config.block_size + 1].contiguous()
+        input_ids = val_data[0].to(device).contiguous()
+        targets = val_data[1].to(device).contiguous()
+        logits = model(input_ids).to(device)
         loss = chunked_cross_entropy(logits, targets, chunk_size=0)
 
         # loss_func = FusedCrossEntropyLoss()

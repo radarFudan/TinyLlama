@@ -55,6 +55,13 @@ python scripts/prepare_slimpajama.py --source_path /path/to/SlimPajama --tokeniz
 ```
 The processed data will take 1.8T storage.
 
+```
+python scripts/prepare_slimpajama.py --source_path /home/aiops/wangsd/TinyLlama/data/SlimPajama-627B --tokenizer_path data/llama  --destination_path /home/aiops/wangsd/TinyLlama/data/slim_star_combined --split train --percentage 1.0
+python scripts/prepare_slimpajama.py --source_path /home/aiops/wangsd/TinyLlama/data/SlimPajama-627B --tokenizer_path data/llama  --destination_path /home/aiops/wangsd/TinyLlama/data/slim_star_combined --split validation --percentage 1.0
+
+python scripts/prepare_file.py --source_path /home/aiops/wangsd/TinyLlama/data/mix_sample --tokenizer_path data/llama --destination_path data/mix_sample_combined --split train --percentage 1.0
+```
+
 ### Pretraining
 If your setup comprises two nodes, each with 8 GPUs, you can initiate pretraining with the following commands:
 
@@ -79,15 +86,3 @@ lightning run model \
     pretrain/tinyllama.py --devices 8 --train_data_dir data/slim_star   --val_data_dir data/slim_star
 ```
 You can follow [these instructions](https://lightning.ai/docs/fabric/stable/guide/multi_node/slurm.html) if you have a slurm cluster.
-
-### Pretraining with wikitext
-
-```
-lightning run model \
-    --node-rank=0  \
-    --main-address=172.16.101.5 \
-    --accelerator=cuda \
-    --devices=1 \
-    --num-nodes=1 \
-    pretrain/tinyllama.py --devices 1 --train_data_dir data/wikitext  --val_data_dir data/wikitext --use_wikitext True
-```
