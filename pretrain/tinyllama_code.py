@@ -131,7 +131,7 @@ def main(fabric, train_data_dir, val_data_dir, resume):
 
     fabric.print(f"Loading model {str(checkpoint_path)!r} with {config.__dict__}")
     t0 = time.perf_counter()
-    with fabric.init_module(empty_init=True):
+    with fabric.init_module(empty_init=(fabric.world_size > 1)):
         model = GPT(config)
     
  

@@ -31,16 +31,16 @@ out_dir = Path("out") / name
 
 # Hyperparameters
 # num_of_devices = 8
-num_of_devices = 2
+num_of_devices = 1
 global_batch_size = 512
 learning_rate = 4e-4
-micro_batch_size = 16
-max_step = 715256 * 2
+micro_batch_size = 4
+max_step = 715256
 warmup_steps = 2000
 log_step_interval = 10
 eval_iters = 100
-save_step_interval = 1000
-eval_step_interval = 1000
+save_step_interval = 5000
+eval_step_interval = 5000
 
 
 weight_decay = 1e-1
@@ -135,7 +135,7 @@ def main(fabric, train_data_dir, val_data_dir, resume):
 
     fabric.print(f"Loading model with {config.__dict__}")
     t0 = time.perf_counter()
-    with fabric.init_module(empty_init=True):
+    with fabric.init_module(empty_init=(fabric.world_size > 1)):
         model = GPT(config)
         model.apply(partial(model._init_weights ,n_layer=config.n_layer))
  

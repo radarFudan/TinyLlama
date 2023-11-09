@@ -25,8 +25,8 @@ import random
 
 # model_name = "tiny_LLaMA_1b"
 # name = "tinyllama_1b"
-model_name = "tiny_LLaMA_120M_SSM"
-name = "tinyllama_120m_ssm"
+model_name = "tiny_LLaMA_120M"
+name = "tinyllama_120m"
 out_dir = Path("out") / name
 
 # Hyperparameters
@@ -65,6 +65,14 @@ log_iter_interval = log_step_interval * gradient_accumulation_steps
 
 
 # Treat all dataset equally by their size. If you want to use a different weight for a dataset, add it to the list with the weight.
+# train_data_config = [
+#     ("train_slim", 0.693584),
+#     ("train_star", 0.306416),
+# ]
+
+# val_data_config = [
+#     ("validation", 1.0),
+# ]
 train_data_config = [
     ("train_ind", 1.0),
 ]
@@ -75,7 +83,7 @@ val_data_config = [
 
 hparams = {k: v for k, v in locals().items() if isinstance(v, (int, float, str)) and not k.startswith("_")}
 logger = step_csv_logger("out", name, flush_logs_every_n_steps=log_iter_interval)
-wandb_logger = WandbLogger(name="tiny_llama_120M_SSM_O1", id="tiny_llama_120M_SSM_O1", project="TL3", offline=True)
+wandb_logger = WandbLogger(name="tiny_llama_120M_transformer", id="tiny_llama_120M_transformer", project="TL3", offline=True)
 
 
 def setup(
@@ -136,7 +144,7 @@ def main(fabric, train_data_dir, val_data_dir, resume):
 
     fabric.print(f"Loading model with {config.__dict__}")
     t0 = time.perf_counter()
-    with fabric.init_module(empty_init=(fabric.world_size > 1)):
+    with fabric.init_module(empty_init=True):
         model = GPT(config)
         model.apply(partial(model._init_weights ,n_layer=config.n_layer))
  
