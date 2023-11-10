@@ -25,8 +25,6 @@ import random
 
 model_name = "tiny_LLaMA_1b_SSM"
 name = "tinyllama_1b_ssm"
-# model_name = "tiny_LLaMA_120M_SSM"
-# name = "tinyllama_120m_ssm"
 out_dir = Path("out") / name
 
 # Hyperparameters

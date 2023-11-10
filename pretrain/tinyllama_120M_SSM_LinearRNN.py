@@ -23,8 +23,6 @@ from pytorch_lightning.loggers import WandbLogger
 from lit_gpt import FusedCrossEntropyLoss
 import random
 
-# model_name = "tiny_LLaMA_1b"
-# name = "tinyllama_1b"
 model_name = "tiny_LLaMA_120M_LinearRNN"
 name = "tinyllama_120m_linearRNN"
 out_dir = Path("out") / name
