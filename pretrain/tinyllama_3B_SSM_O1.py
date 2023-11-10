@@ -32,13 +32,13 @@ out_dir = Path("out") / name
 num_of_devices = 1
 global_batch_size = 512
 learning_rate = 4e-4
-micro_batch_size = 4
+micro_batch_size = 8
 max_step = 715256
 warmup_steps = 2000
 log_step_interval = 10
 eval_iters = 100
-save_step_interval = 5000
-eval_step_interval = 5000
+save_step_interval = 2000
+eval_step_interval = 2000
 
 
 weight_decay = 1e-1

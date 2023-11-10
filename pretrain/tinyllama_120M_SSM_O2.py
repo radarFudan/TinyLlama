@@ -33,13 +33,13 @@ num_of_devices = 4
 global_batch_size = 512
 learning_rate = 4e-4
 # micro_batch_size = 8
-micro_batch_size = 32
+micro_batch_size = 64
 max_step = 715256 * 2
 warmup_steps = 2000
 log_step_interval = 10
 eval_iters = 100
-save_step_interval = 1000
-eval_step_interval = 1000
+save_step_interval = 2000
+eval_step_interval = 2000
 
 
 weight_decay = 1e-1
