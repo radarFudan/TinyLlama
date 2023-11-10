@@ -316,8 +316,14 @@ class SSM_Hyena(nn.Module):
         # input/output projection
         self.in_proj = nn.Linear(config.n_embd, config.n_ssm * config.order, bias=config.bias)
         self.out_proj = nn.Linear(config.n_ssm, config.n_embd, bias=config.bias)
+
+        self.D = nn.Linear(config.n_ssm, config.n_ssm, bias=config.bias)
+
         self.order = config.order
         self.n_ssm = config.n_ssm
+
+        self.filter_activation = nn.GELU()
+        self.activation = nn.Identity()
 
         self.config = config
 
@@ -344,12 +350,16 @@ class SSM_Hyena(nn.Module):
             y = y * x[i, :, :, :] # Then it seems it would be difficult to approximate order one term? 
 
             # Current associative scan does not have bias term.
-            # TODO
-            _, y = associative_scan(nested_func, (Lambda_elements[i,:,:,:], y), axis=1) # B * T * C
+            # TODO, currently bias term is shared across different orders
+            # _, y = associative_scan(nested_func, (Lambda_elements[i,:,:,:], y), axis=1) # B * T * C
+            y = associative_scan(nested_func, (Lambda_elements[i,:,:,:], y), axis=1)[1] + self.D(y) # B * T * C
 
             # TODO, Lambda_elements[0,:,:,:] is not used. 
 
+            y = self.filter_activation(y)
+
         # output projection
+        y = self.activation(y) # It's identity. 
         y = self.out_proj(y)
 
         return y, kv_cache

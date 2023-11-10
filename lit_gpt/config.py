@@ -350,7 +350,7 @@ tiny_LLaMA = [
     ),
     dict(
         org="StatNLP-research",
-        name="tiny_LLaMA_120M_SSM_O2", 
+        name="tiny_LLaMA_120M_SSM_O2",  # 108,351,744
         block_size=2048,
         vocab_size=32000,
         padding_multiple=64,
@@ -358,7 +358,7 @@ tiny_LLaMA = [
         n_head=12,
         n_embd=768,
         n_ssm=128,
-        order=1,
+        order=2,
         rotary_percentage=1.0,
         parallel_residual=False,
         bias=False,
