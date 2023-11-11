@@ -52,6 +52,7 @@ class Config:
     intermediate_size: Optional[int] = None
     condense_ratio: int = 1
     time_mixer: str = None,
+    parameterization: str = "direct",
 
     def __post_init__(self):
         # error checking
@@ -246,7 +247,94 @@ for c in falcon:
 # StatNLP Research
 #############################
 tiny_LLaMA = [
-     
+    dict( # exp
+        org="StatNLP-research",
+        name="tiny_LLaMA_120M_SSM_O2_exp",  # 108,351,744
+        block_size=2048,
+        vocab_size=32000,
+        padding_multiple=64,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        n_ssm=128,
+        order=2,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=2048,
+        n_query_groups=1,
+        time_mixer="ssm",
+        parameterization="exp",
+    ),
+    dict( # direct
+        org="StatNLP-research",
+        name="tiny_LLaMA_120M_SSM_O2_direct",  # 108,351,744
+        block_size=2048,
+        vocab_size=32000,
+        padding_multiple=64,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        n_ssm=128,
+        order=2,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=2048,
+        n_query_groups=1,
+        time_mixer="ssm",
+        parameterization="direct",
+    ),
+    dict( # softplus
+        org="StatNLP-research",
+        name="tiny_LLaMA_120M_SSM_O2_softplus",  # 108,351,744
+        block_size=2048,
+        vocab_size=32000,
+        padding_multiple=64,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        n_ssm=128,
+        order=2,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=2048,
+        n_query_groups=1,
+        time_mixer="ssm",
+        parameterization="softplus",
+    ),
+    dict( # best
+        org="StatNLP-research",
+        name="tiny_LLaMA_120M_SSM_O2_best",  # 108,351,744
+        block_size=2048,
+        vocab_size=32000,
+        padding_multiple=64,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        n_ssm=128,
+        order=2,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=2048,
+        n_query_groups=1,
+        time_mixer="ssm",
+        parameterization="best",
+    ),
     # https://twitter.com/cwolferesearch/status/1691929174175264858
     dict(
         org="StatNLP-research",

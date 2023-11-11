@@ -311,7 +311,22 @@ class SSM_Hyena(nn.Module):
     """
     def __init__(self, config: Config) -> None:
         super().__init__()
-        self.lambdas = nn.Parameter(torch.rand(config.order, 1, 1, config.n_ssm))
+
+        # self.lambdas = nn.Parameter(torch.rand(config.order, 1, 1, config.n_ssm))
+
+        self.parameterization = config.parameterization
+        lambdas_weights = torch.rand(config.order, 1, 1, config.n_ssm)
+        if self.parameterization == "exp":
+            lambdas = torch.log(lambdas_weights)
+        elif self.parameterization == "direct":
+            lambdas = lambdas_weights
+        elif self.parameterization == "softplus":
+            lambdas = torch.log(torch.exp(lambdas_weights) - 1.0)
+        elif self.parameterization == "best":
+            lambdas = torch.sqrt(torch.maximum(1 / lambdas_weights - 0.1, 1e-6 * torch.ones_like(lambdas_weights)))
+        else:
+            return ValueError(f"Unknown parameterization {self.parameterization}")
+        self.register("lambdas", lambdas, 0.001)
 
         # input/output projection
         self.in_proj = nn.Linear(config.n_embd, config.n_ssm * config.order, bias=config.bias)
@@ -341,7 +356,19 @@ class SSM_Hyena(nn.Module):
         x = einops.rearrange(x, "b t (o c) -> o b t c", o = self.order, c = self.n_ssm) # order, batch size, sequence length, n_ssm
         O, _, _, C = x.size()  # order * batch size, sequence length, n_ssm
 
-        Lambda_elements = self.lambdas * torch.ones(1, 1, T, 1).to(self.lambdas.device) # O * B * T * C
+        # Different parameterization is reflected here.
+        if self.parameterization == "exp":
+            lambdas = -torch.exp(self.lambdas)
+        elif self.parameterization == "direct":
+            lambdas = self.lambdas
+        elif self.parameterization == "softplus":
+            lambdas = -torch.log(1 + torch.exp(self.lambdas))
+        elif self.parameterization == "best":
+            lambdas = -1 / (self.lambdas**2 + 0.1)
+        else:
+            return ValueError(f"Unknown parameterization {self.parameterization}")
+        
+        Lambda_elements = lambdas * torch.ones(1, 1, T, 1).to(self.lambdas.device) # O * B * T * C
 
         y = x[0,:,:,:] # B * T * C
         
