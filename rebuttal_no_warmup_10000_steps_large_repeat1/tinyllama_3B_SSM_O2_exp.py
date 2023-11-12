@@ -122,14 +122,14 @@ def main(fabric, train_data_dir, val_data_dir, resume):
         fabric=fabric,
         train_data_dir=train_data_dir,
         val_data_dir=val_data_dir,
-        seed=3407,
+        seed=3408,
     )
     if val_dataloader is None:
         train_dataloader = fabric.setup_dataloaders(train_dataloader)
     else:
         train_dataloader, val_dataloader = fabric.setup_dataloaders(train_dataloader, val_dataloader)
 
-    fabric.seed_everything(3407)  # same seed for every process to init model (FSDP)
+    fabric.seed_everything(3408)  # same seed for every process to init model (FSDP)
 
     fabric.print(f"Loading model with {config.__dict__}")
     t0 = time.perf_counter()
