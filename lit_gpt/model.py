@@ -323,7 +323,7 @@ class SSM_Hyena(nn.Module):
         elif self.parameterization == "softplus":
             lambdas = torch.log(torch.exp(lambdas_weights) - 1.0)
         elif self.parameterization == "best":
-            lambdas = torch.sqrt(torch.maximum(1 / lambdas_weights - 0.1, 1e-6 * torch.ones_like(lambdas_weights)))
+            lambdas = torch.sqrt(torch.maximum(1 / lambdas_weights - 1.0, 1e-6 * torch.ones_like(lambdas_weights)))
         else:
             return ValueError(f"Unknown parameterization {self.parameterization}")
         self.register("lambdas", lambdas, 0.001)
@@ -364,7 +364,7 @@ class SSM_Hyena(nn.Module):
         elif self.parameterization == "softplus":
             lambdas = -torch.log(1 + torch.exp(self.lambdas))
         elif self.parameterization == "best":
-            lambdas = -1 / (self.lambdas**2 + 0.1)
+            lambdas = -1 / (self.lambdas**2 + 1.0)
         else:
             return ValueError(f"Unknown parameterization {self.parameterization}")
         
@@ -393,6 +393,18 @@ class SSM_Hyena(nn.Module):
     
     def reset_parameters(self) -> None:
         pass
+
+    def register(self, name, tensor, lr=None):
+        """Register a tensor with a configurable learning rate and 0 weight decay"""
+
+        if lr == 0.0:
+            self.register_buffer(name, tensor)
+        else:
+            self.register_parameter(name, nn.Parameter(tensor))
+
+            optim = {"weight_decay": 0.0}
+            if lr is not None: optim["lr"] = lr
+            setattr(getattr(self, name), "_optim", optim)
 
 
 class GptNeoxMLP(nn.Module):
