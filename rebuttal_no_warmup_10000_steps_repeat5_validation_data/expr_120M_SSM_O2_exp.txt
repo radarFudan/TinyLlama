@@ -1,0 +1,593 @@
+
+===================================BUG REPORT===================================
+Welcome to bitsandbytes. For bug reports, please run
+
+python -m bitsandbytes
+
+ and submit this information together with your error trace to: https://github.com/TimDettmers/bitsandbytes/issues
+================================================================================
+bin /opt/conda/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so
+CUDA SETUP: CUDA runtime path found: /usr/local/cuda/lib64/libcudart.so.11.0
+CUDA SETUP: Highest compute capability among GPUs detected: 8.0
+CUDA SETUP: Detected CUDA version 118
+CUDA SETUP: Loading binary /opt/conda/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so...
+{'model_name': 'tiny_LLaMA_120M_SSM_O2_exp', 'name': 'tinyllama_120m_ssm_o2_exp', 'num_of_devices': 1, 'global_batch_size': 512, 'learning_rate': 0.01, 'micro_batch_size': 16, 'max_step': 10000, 'warmup_steps': 10, 'log_step_interval': 10, 'eval_iters': 100, 'save_step_interval': 2000, 'eval_step_interval': 2000, 'weight_decay': 0.1, 'beta1': 0.9, 'beta2': 0.95, 'grad_clip': 1.0, 'decay_lr': True, 'min_lr': 4e-05, 'batch_size': 512, 'gradient_accumulation_steps': 32, 'warmup_iters': 320, 'max_iters': 320000, 'lr_decay_iters': 320000, 'log_iter_interval': 320}
+Loading model with {'org': 'StatNLP-research', 'name': 'tiny_LLaMA_120M_SSM_O2_exp', 'block_size': 2048, 'vocab_size': 32000, 'padding_multiple': 64, 'padded_vocab_size': 32000, 'n_layer': 12, 'n_head': 12, 'n_embd': 768, 'n_ssm': 128, 'order': 2, 'rotary_percentage': 1.0, 'parallel_residual': False, 'bias': False, 'n_query_groups': 1, 'shared_attention_norm': False, '_norm_class': 'FusedRMSNorm', 'norm_eps': 1e-05, '_mlp_class': 'LLaMAMLP', 'intermediate_size': 2048, 'condense_ratio': 1, 'time_mixer': 'ssm', 'parameterization': 'exp'}
+Time to instantiate model: 0.20 seconds.
+Total parameters 109,532,928
+Validating ...
+Sanity check, val loss 10.5819, val time: 8552.07ms
+Estimated TFLOPs: 33.90
+iter 1 step 0: loss 10.5749, iter time: 219.04ms remaining time: 22.99 hours.  or 0.96 days. 
+iter 2 step 0: loss 10.5976, iter time: 195.93ms remaining time: 21.36 hours.  or 0.89 days. 
+iter 3 step 0: loss 10.5821, iter time: 194.66ms remaining time: 20.94 hours.  or 0.87 days. 
+iter 4 step 0: loss 10.5779, iter time: 195.01ms remaining time: 20.39 hours.  or 0.85 days. 
+iter 5 step 0: loss 10.5900, iter time: 195.51ms remaining time: 20.04 hours.  or 0.83 days. 
+iter 6 step 0: loss 10.6024, iter time: 196.67ms remaining time: 19.91 hours.  or 0.83 days. 
+iter 7 step 0: loss 10.5820, iter time: 196.37ms remaining time: 19.82 hours.  or 0.83 days. 
+iter 8 step 0: loss 10.5786, iter time: 194.17ms remaining time: 19.68 hours.  or 0.82 days. 
+iter 9 step 0: loss 10.5820, iter time: 196.25ms remaining time: 19.54 hours.  or 0.81 days. 
+iter 10 step 0: loss 10.5817, iter time: 195.08ms remaining time: 19.41 hours.  or 0.81 days. 
+iter 11 step 0: loss 10.5815, iter time: 194.78ms remaining time: 19.28 hours.  or 0.80 days. 
+iter 12 step 0: loss 10.5899, iter time: 194.49ms remaining time: 19.16 hours.  or 0.80 days. 
+iter 13 step 0: loss 10.5726, iter time: 194.43ms remaining time: 19.04 hours.  or 0.79 days. 
+iter 14 step 0: loss 10.5802, iter time: 195.53ms remaining time: 18.98 hours.  or 0.79 days. 
+iter 15 step 0: loss 10.5988, iter time: 194.77ms remaining time: 18.96 hours.  or 0.79 days. 
+iter 16 step 0: loss 10.5920, iter time: 194.56ms remaining time: 18.91 hours.  or 0.79 days. 
+iter 17 step 0: loss 10.5910, iter time: 194.69ms remaining time: 18.85 hours.  or 0.79 days. 
+iter 18 step 0: loss 10.5829, iter time: 196.37ms remaining time: 18.83 hours.  or 0.78 days. 
+iter 19 step 0: loss 10.5846, iter time: 195.13ms remaining time: 18.77 hours.  or 0.78 days. 
+iter 20 step 0: loss 10.5707, iter time: 194.76ms remaining time: 18.73 hours.  or 0.78 days. 
+iter 21 step 0: loss 10.5872, iter time: 195.05ms remaining time: 18.69 hours.  or 0.78 days. 
+iter 22 step 0: loss 10.5928, iter time: 195.57ms remaining time: 18.65 hours.  or 0.78 days. 
+iter 23 step 0: loss 10.5869, iter time: 195.24ms remaining time: 18.62 hours.  or 0.78 days. 
+iter 24 step 0: loss 10.5900, iter time: 194.74ms remaining time: 18.58 hours.  or 0.77 days. 
+iter 25 step 0: loss 10.6045, iter time: 195.07ms remaining time: 18.56 hours.  or 0.77 days. 
+iter 26 step 0: loss 10.5717, iter time: 195.09ms remaining time: 18.53 hours.  or 0.77 days. 
+iter 27 step 0: loss 10.6049, iter time: 194.66ms remaining time: 18.49 hours.  or 0.77 days. 
+iter 28 step 0: loss 10.5798, iter time: 209.32ms remaining time: 18.52 hours.  or 0.77 days. 
+iter 29 step 0: loss 10.5822, iter time: 218.35ms remaining time: 18.57 hours.  or 0.77 days. 
+iter 30 step 0: loss 10.5710, iter time: 199.02ms remaining time: 18.55 hours.  or 0.77 days. 
+iter 31 step 0: loss 10.5879, iter time: 209.97ms remaining time: 18.56 hours.  or 0.77 days. 
+Gradient norm:  tensor(4.8492, device='cuda:0')
+iter 32 step 1: loss 10.5887, iter time: 274.32ms (optimizer.step) remaining time: 18.75 hours.  or 0.78 days. 
+iter 33 step 1: loss 10.0651, iter time: 197.17ms remaining time: 18.73 hours.  or 0.78 days. 
+iter 34 step 1: loss 10.0687, iter time: 207.67ms remaining time: 18.74 hours.  or 0.78 days. 
+iter 35 step 1: loss 10.1106, iter time: 212.88ms remaining time: 18.76 hours.  or 0.78 days. 
+iter 36 step 1: loss 10.0992, iter time: 209.05ms remaining time: 18.76 hours.  or 0.78 days. 
+iter 37 step 1: loss 10.1099, iter time: 215.91ms remaining time: 18.79 hours.  or 0.78 days. 
+iter 38 step 1: loss 10.1097, iter time: 218.97ms remaining time: 18.82 hours.  or 0.78 days. 
+iter 39 step 1: loss 10.0796, iter time: 202.30ms remaining time: 18.80 hours.  or 0.78 days. 
+iter 40 step 1: loss 10.0969, iter time: 211.12ms remaining time: 18.80 hours.  or 0.78 days. 
+iter 41 step 1: loss 10.0973, iter time: 198.19ms remaining time: 18.78 hours.  or 0.78 days. 
+iter 42 step 1: loss 10.0756, iter time: 206.25ms remaining time: 18.77 hours.  or 0.78 days. 
+iter 43 step 1: loss 10.0948, iter time: 215.67ms remaining time: 18.79 hours.  or 0.78 days. 
+iter 44 step 1: loss 10.0913, iter time: 207.07ms remaining time: 18.80 hours.  or 0.78 days. 
+iter 45 step 1: loss 10.0713, iter time: 215.78ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 46 step 1: loss 10.1077, iter time: 214.83ms remaining time: 18.82 hours.  or 0.78 days. 
+iter 47 step 1: loss 10.0898, iter time: 203.42ms remaining time: 18.80 hours.  or 0.78 days. 
+iter 48 step 1: loss 10.0967, iter time: 213.19ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 49 step 1: loss 10.1072, iter time: 213.10ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 50 step 1: loss 10.0954, iter time: 199.43ms remaining time: 18.80 hours.  or 0.78 days. 
+iter 51 step 1: loss 10.0787, iter time: 212.58ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 52 step 1: loss 10.0928, iter time: 209.69ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 53 step 1: loss 10.0606, iter time: 213.73ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 54 step 1: loss 10.0749, iter time: 217.61ms remaining time: 18.83 hours.  or 0.78 days. 
+iter 55 step 1: loss 10.1125, iter time: 202.16ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 56 step 1: loss 10.0802, iter time: 212.30ms remaining time: 18.82 hours.  or 0.78 days. 
+iter 57 step 1: loss 10.0955, iter time: 214.80ms remaining time: 18.83 hours.  or 0.78 days. 
+iter 58 step 1: loss 10.0678, iter time: 206.13ms remaining time: 18.83 hours.  or 0.78 days. 
+iter 59 step 1: loss 10.0990, iter time: 213.44ms remaining time: 18.83 hours.  or 0.78 days. 
+iter 60 step 1: loss 10.0631, iter time: 207.41ms remaining time: 18.84 hours.  or 0.78 days. 
+iter 61 step 1: loss 10.0758, iter time: 213.23ms remaining time: 18.84 hours.  or 0.78 days. 
+iter 62 step 1: loss 10.0732, iter time: 213.28ms remaining time: 18.85 hours.  or 0.79 days. 
+iter 63 step 1: loss 10.0832, iter time: 204.62ms remaining time: 18.84 hours.  or 0.79 days. 
+Gradient norm:  tensor(16.7559, device='cuda:0')
+iter 64 step 2: loss 10.0929, iter time: 231.48ms (optimizer.step) remaining time: 18.87 hours.  or 0.79 days. 
+iter 65 step 2: loss 9.3911, iter time: 208.69ms remaining time: 18.87 hours.  or 0.79 days. 
+iter 66 step 2: loss 9.3571, iter time: 201.32ms remaining time: 18.86 hours.  or 0.79 days. 
+iter 67 step 2: loss 9.3099, iter time: 208.68ms remaining time: 18.86 hours.  or 0.79 days. 
+iter 68 step 2: loss 9.2922, iter time: 212.51ms remaining time: 18.86 hours.  or 0.79 days. 
+iter 69 step 2: loss 9.3036, iter time: 208.62ms remaining time: 18.86 hours.  or 0.79 days. 
+iter 70 step 2: loss 9.2903, iter time: 211.24ms remaining time: 18.86 hours.  or 0.79 days. 
+iter 71 step 2: loss 9.3103, iter time: 202.81ms remaining time: 18.85 hours.  or 0.79 days. 
+iter 72 step 2: loss 9.3058, iter time: 201.94ms remaining time: 18.84 hours.  or 0.79 days. 
+iter 73 step 2: loss 9.2917, iter time: 210.82ms remaining time: 18.84 hours.  or 0.79 days. 
+iter 74 step 2: loss 9.2921, iter time: 202.79ms remaining time: 18.84 hours.  or 0.78 days. 
+iter 75 step 2: loss 9.3074, iter time: 208.18ms remaining time: 18.84 hours.  or 0.78 days. 
+iter 76 step 2: loss 9.3144, iter time: 206.08ms remaining time: 18.83 hours.  or 0.78 days. 
+iter 77 step 2: loss 9.3492, iter time: 199.94ms remaining time: 18.82 hours.  or 0.78 days. 
+iter 78 step 2: loss 9.2728, iter time: 211.77ms remaining time: 18.82 hours.  or 0.78 days. 
+iter 79 step 2: loss 9.3174, iter time: 201.32ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 80 step 2: loss 9.3417, iter time: 211.27ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 81 step 2: loss 9.2714, iter time: 209.39ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 82 step 2: loss 9.3355, iter time: 210.02ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 83 step 2: loss 9.3079, iter time: 212.49ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 84 step 2: loss 9.2800, iter time: 201.41ms remaining time: 18.80 hours.  or 0.78 days. 
+iter 85 step 2: loss 9.3430, iter time: 214.50ms remaining time: 18.81 hours.  or 0.78 days. 
+iter 86 step 2: loss 9.3149, iter time: 213.39ms remaining time: 18.82 hours.  or 0.78 days. 
+iter 87 step 2: loss 9.3163, iter time: 196.44ms remaining time: 18.82 hours.  or 0.78 days. 
+iter 88 step 2: loss 9.3085, iter time: 197.11ms remaining time: 18.80 hours.  or 0.78 days. 
+iter 89 step 2: loss 9.3019, iter time: 197.28ms remaining time: 18.79 hours.  or 0.78 days. 
+iter 90 step 2: loss 9.3900, iter time: 197.68ms remaining time: 18.78 hours.  or 0.78 days. 
+iter 91 step 2: loss 9.3343, iter time: 197.32ms remaining time: 18.77 hours.  or 0.78 days. 
+iter 92 step 2: loss 9.3146, iter time: 198.97ms remaining time: 18.76 hours.  or 0.78 days. 
+iter 93 step 2: loss 9.3062, iter time: 197.65ms remaining time: 18.75 hours.  or 0.78 days. 
+iter 94 step 2: loss 9.2934, iter time: 196.89ms remaining time: 18.73 hours.  or 0.78 days. 
+iter 95 step 2: loss 9.3245, iter time: 196.81ms remaining time: 18.72 hours.  or 0.78 days. 
+Gradient norm:  tensor(23.1880, device='cuda:0')
+iter 96 step 3: loss 9.3139, iter time: 207.64ms (optimizer.step) remaining time: 18.72 hours.  or 0.78 days. 
+iter 97 step 3: loss 8.3625, iter time: 196.98ms remaining time: 18.71 hours.  or 0.78 days. 
+iter 98 step 3: loss 8.4084, iter time: 197.45ms remaining time: 18.70 hours.  or 0.78 days. 
+iter 99 step 3: loss 8.3816, iter time: 197.99ms remaining time: 18.69 hours.  or 0.78 days. 
+iter 100 step 3: loss 8.3803, iter time: 196.67ms remaining time: 18.68 hours.  or 0.78 days. 
+iter 101 step 3: loss 8.3958, iter time: 198.25ms remaining time: 18.67 hours.  or 0.78 days. 
+iter 102 step 3: loss 8.3454, iter time: 194.48ms remaining time: 18.66 hours.  or 0.78 days. 
+iter 103 step 3: loss 8.5452, iter time: 194.98ms remaining time: 18.65 hours.  or 0.78 days. 
+iter 104 step 3: loss 8.4387, iter time: 195.13ms remaining time: 18.64 hours.  or 0.78 days. 
+iter 105 step 3: loss 8.4042, iter time: 355.37ms remaining time: 18.76 hours.  or 0.78 days. 
+iter 106 step 3: loss 8.4671, iter time: 194.07ms remaining time: 18.75 hours.  or 0.78 days. 
+iter 107 step 3: loss 8.3786, iter time: 195.06ms remaining time: 18.74 hours.  or 0.78 days. 
+iter 108 step 3: loss 8.3798, iter time: 196.07ms remaining time: 18.73 hours.  or 0.78 days. 
+iter 109 step 3: loss 8.2789, iter time: 196.85ms remaining time: 18.72 hours.  or 0.78 days. 
+iter 110 step 3: loss 8.3915, iter time: 194.82ms remaining time: 18.71 hours.  or 0.78 days. 
+iter 111 step 3: loss 8.3912, iter time: 195.79ms remaining time: 18.69 hours.  or 0.78 days. 
+iter 112 step 3: loss 8.3767, iter time: 197.14ms remaining time: 18.68 hours.  or 0.78 days. 
+iter 113 step 3: loss 8.4590, iter time: 194.39ms remaining time: 18.67 hours.  or 0.78 days. 
+iter 114 step 3: loss 8.4226, iter time: 195.52ms remaining time: 18.66 hours.  or 0.78 days. 
+iter 115 step 3: loss 8.4712, iter time: 195.63ms remaining time: 18.65 hours.  or 0.78 days. 
+iter 116 step 3: loss 8.4076, iter time: 195.80ms remaining time: 18.64 hours.  or 0.78 days. 
+iter 117 step 3: loss 8.4766, iter time: 195.88ms remaining time: 18.63 hours.  or 0.78 days. 
+iter 118 step 3: loss 8.4600, iter time: 194.84ms remaining time: 18.62 hours.  or 0.78 days. 
+iter 119 step 3: loss 8.4511, iter time: 196.27ms remaining time: 18.62 hours.  or 0.78 days. 
+iter 120 step 3: loss 8.3395, iter time: 194.68ms remaining time: 18.61 hours.  or 0.78 days. 
+iter 121 step 3: loss 8.3466, iter time: 195.48ms remaining time: 18.60 hours.  or 0.77 days. 
+iter 122 step 3: loss 8.3468, iter time: 195.61ms remaining time: 18.59 hours.  or 0.77 days. 
+iter 123 step 3: loss 8.4632, iter time: 196.94ms remaining time: 18.58 hours.  or 0.77 days. 
+iter 124 step 3: loss 8.3639, iter time: 194.90ms remaining time: 18.57 hours.  or 0.77 days. 
+iter 125 step 3: loss 8.3918, iter time: 195.70ms remaining time: 18.57 hours.  or 0.77 days. 
+iter 126 step 3: loss 8.3646, iter time: 194.73ms remaining time: 18.56 hours.  or 0.77 days. 
+iter 127 step 3: loss 8.3720, iter time: 196.13ms remaining time: 18.55 hours.  or 0.77 days. 
+Gradient norm:  tensor(29.9608, device='cuda:0')
+iter 128 step 4: loss 8.4051, iter time: 206.41ms (optimizer.step) remaining time: 18.55 hours.  or 0.77 days. 
+iter 129 step 4: loss 7.7970, iter time: 196.48ms remaining time: 18.54 hours.  or 0.77 days. 
+iter 130 step 4: loss 7.9843, iter time: 196.83ms remaining time: 18.53 hours.  or 0.77 days. 
+iter 131 step 4: loss 8.1097, iter time: 195.79ms remaining time: 18.53 hours.  or 0.77 days. 
+iter 132 step 4: loss 8.0696, iter time: 195.07ms remaining time: 18.52 hours.  or 0.77 days. 
+iter 133 step 4: loss 7.9415, iter time: 195.99ms remaining time: 18.51 hours.  or 0.77 days. 
+iter 134 step 4: loss 7.9211, iter time: 196.13ms remaining time: 18.50 hours.  or 0.77 days. 
+iter 135 step 4: loss 7.9544, iter time: 195.84ms remaining time: 18.50 hours.  or 0.77 days. 
+iter 136 step 4: loss 7.9529, iter time: 195.52ms remaining time: 18.49 hours.  or 0.77 days. 
+iter 137 step 4: loss 7.8533, iter time: 196.34ms remaining time: 18.48 hours.  or 0.77 days. 
+iter 138 step 4: loss 7.9271, iter time: 195.95ms remaining time: 18.48 hours.  or 0.77 days. 
+iter 139 step 4: loss 7.7974, iter time: 196.31ms remaining time: 18.47 hours.  or 0.77 days. 
+iter 140 step 4: loss 7.8621, iter time: 195.89ms remaining time: 18.46 hours.  or 0.77 days. 
+iter 141 step 4: loss 7.9075, iter time: 195.55ms remaining time: 18.46 hours.  or 0.77 days. 
+iter 142 step 4: loss 7.8772, iter time: 196.44ms remaining time: 18.45 hours.  or 0.77 days. 
+iter 143 step 4: loss 7.9822, iter time: 195.49ms remaining time: 18.44 hours.  or 0.77 days. 
+iter 144 step 4: loss 7.9786, iter time: 196.27ms remaining time: 18.44 hours.  or 0.77 days. 
+iter 145 step 4: loss 7.8099, iter time: 194.94ms remaining time: 18.43 hours.  or 0.77 days. 
+iter 146 step 4: loss 8.0143, iter time: 194.76ms remaining time: 18.42 hours.  or 0.77 days. 
+iter 147 step 4: loss 7.8983, iter time: 196.32ms remaining time: 18.42 hours.  or 0.77 days. 
+iter 148 step 4: loss 8.0421, iter time: 195.75ms remaining time: 18.41 hours.  or 0.77 days. 
+iter 149 step 4: loss 7.8672, iter time: 194.65ms remaining time: 18.41 hours.  or 0.77 days. 
+iter 150 step 4: loss 7.9353, iter time: 196.59ms remaining time: 18.40 hours.  or 0.77 days. 
+iter 151 step 4: loss 8.1012, iter time: 195.66ms remaining time: 18.40 hours.  or 0.77 days. 
+iter 152 step 4: loss 8.1424, iter time: 194.72ms remaining time: 18.39 hours.  or 0.77 days. 
+iter 153 step 4: loss 7.9589, iter time: 195.10ms remaining time: 18.39 hours.  or 0.77 days. 
+iter 154 step 4: loss 7.9119, iter time: 195.36ms remaining time: 18.38 hours.  or 0.77 days. 
+iter 155 step 4: loss 8.0497, iter time: 195.13ms remaining time: 18.37 hours.  or 0.77 days. 
+iter 156 step 4: loss 7.8977, iter time: 194.73ms remaining time: 18.37 hours.  or 0.77 days. 
+iter 157 step 4: loss 7.9679, iter time: 195.42ms remaining time: 18.36 hours.  or 0.77 days. 
+iter 158 step 4: loss 7.9169, iter time: 196.83ms remaining time: 18.36 hours.  or 0.76 days. 
+iter 159 step 4: loss 7.8854, iter time: 194.70ms remaining time: 18.35 hours.  or 0.76 days. 
+Gradient norm:  tensor(22.1254, device='cuda:0')
+iter 160 step 5: loss 7.8643, iter time: 206.42ms (optimizer.step) remaining time: 18.35 hours.  or 0.76 days. 
+iter 161 step 5: loss 8.0410, iter time: 195.68ms remaining time: 18.35 hours.  or 0.76 days. 
+iter 162 step 5: loss 7.9236, iter time: 194.56ms remaining time: 18.34 hours.  or 0.76 days. 
+iter 163 step 5: loss 7.9431, iter time: 194.49ms remaining time: 18.34 hours.  or 0.76 days. 
+iter 164 step 5: loss 7.7483, iter time: 195.31ms remaining time: 18.33 hours.  or 0.76 days. 
+iter 165 step 5: loss 7.7737, iter time: 195.40ms remaining time: 18.32 hours.  or 0.76 days. 
+iter 166 step 5: loss 7.9125, iter time: 195.66ms remaining time: 18.32 hours.  or 0.76 days. 
+iter 167 step 5: loss 7.7182, iter time: 194.56ms remaining time: 18.31 hours.  or 0.76 days. 
+iter 168 step 5: loss 7.8916, iter time: 195.22ms remaining time: 18.31 hours.  or 0.76 days. 
+iter 169 step 5: loss 7.9489, iter time: 195.64ms remaining time: 18.30 hours.  or 0.76 days. 
+iter 170 step 5: loss 7.6220, iter time: 194.61ms remaining time: 18.30 hours.  or 0.76 days. 
+iter 171 step 5: loss 7.9287, iter time: 195.71ms remaining time: 18.29 hours.  or 0.76 days. 
+iter 172 step 5: loss 8.0202, iter time: 195.41ms remaining time: 18.29 hours.  or 0.76 days. 
+iter 173 step 5: loss 7.9529, iter time: 195.57ms remaining time: 18.28 hours.  or 0.76 days. 
+iter 174 step 5: loss 7.7945, iter time: 194.14ms remaining time: 18.28 hours.  or 0.76 days. 
+iter 175 step 5: loss 8.1181, iter time: 194.04ms remaining time: 18.27 hours.  or 0.76 days. 
+iter 176 step 5: loss 8.1243, iter time: 195.42ms remaining time: 18.27 hours.  or 0.76 days. 
+iter 177 step 5: loss 8.0547, iter time: 194.99ms remaining time: 18.26 hours.  or 0.76 days. 
+iter 178 step 5: loss 7.9326, iter time: 194.73ms remaining time: 18.26 hours.  or 0.76 days. 
+iter 179 step 5: loss 7.9678, iter time: 194.30ms remaining time: 18.26 hours.  or 0.76 days. 
+iter 180 step 5: loss 7.8357, iter time: 194.84ms remaining time: 18.25 hours.  or 0.76 days. 
+iter 181 step 5: loss 7.7741, iter time: 194.00ms remaining time: 18.25 hours.  or 0.76 days. 
+iter 182 step 5: loss 8.1179, iter time: 193.97ms remaining time: 18.24 hours.  or 0.76 days. 
+iter 183 step 5: loss 7.8764, iter time: 194.73ms remaining time: 18.24 hours.  or 0.76 days. 
+iter 184 step 5: loss 7.9833, iter time: 194.98ms remaining time: 18.23 hours.  or 0.76 days. 
+iter 185 step 5: loss 7.8846, iter time: 195.79ms remaining time: 18.23 hours.  or 0.76 days. 
+iter 186 step 5: loss 7.7137, iter time: 194.75ms remaining time: 18.23 hours.  or 0.76 days. 
+iter 187 step 5: loss 7.8933, iter time: 194.70ms remaining time: 18.22 hours.  or 0.76 days. 
+iter 188 step 5: loss 7.7807, iter time: 196.30ms remaining time: 18.22 hours.  or 0.76 days. 
+iter 189 step 5: loss 7.8998, iter time: 195.89ms remaining time: 18.21 hours.  or 0.76 days. 
+iter 190 step 5: loss 7.8753, iter time: 196.49ms remaining time: 18.21 hours.  or 0.76 days. 
+iter 191 step 5: loss 7.8321, iter time: 196.38ms remaining time: 18.21 hours.  or 0.76 days. 
+Gradient norm:  tensor(16.2620, device='cuda:0')
+iter 192 step 6: loss 7.8501, iter time: 207.34ms (optimizer.step) remaining time: 18.21 hours.  or 0.76 days. 
+iter 193 step 6: loss 7.9992, iter time: 195.67ms remaining time: 18.21 hours.  or 0.76 days. 
+iter 194 step 6: loss 8.0115, iter time: 195.98ms remaining time: 18.20 hours.  or 0.76 days. 
+iter 195 step 6: loss 8.0714, iter time: 196.33ms remaining time: 18.20 hours.  or 0.76 days. 
+iter 196 step 6: loss 7.9596, iter time: 196.71ms remaining time: 18.20 hours.  or 0.76 days. 
+iter 197 step 6: loss 7.9719, iter time: 197.27ms remaining time: 18.19 hours.  or 0.76 days. 
+iter 198 step 6: loss 8.0243, iter time: 195.79ms remaining time: 18.19 hours.  or 0.76 days. 
+iter 199 step 6: loss 7.9323, iter time: 197.47ms remaining time: 18.19 hours.  or 0.76 days. 
+iter 200 step 6: loss 7.8287, iter time: 196.34ms remaining time: 18.18 hours.  or 0.76 days. 
+iter 201 step 6: loss 7.9444, iter time: 198.13ms remaining time: 18.18 hours.  or 0.76 days. 
+iter 202 step 6: loss 8.0303, iter time: 197.64ms remaining time: 18.18 hours.  or 0.76 days. 
+iter 203 step 6: loss 7.9694, iter time: 197.63ms remaining time: 18.18 hours.  or 0.76 days. 
+iter 204 step 6: loss 7.9805, iter time: 196.29ms remaining time: 18.17 hours.  or 0.76 days. 
+iter 205 step 6: loss 7.7044, iter time: 196.93ms remaining time: 18.17 hours.  or 0.76 days. 
+iter 206 step 6: loss 7.9910, iter time: 197.26ms remaining time: 18.17 hours.  or 0.76 days. 
+iter 207 step 6: loss 7.7294, iter time: 197.34ms remaining time: 18.16 hours.  or 0.76 days. 
+iter 208 step 6: loss 7.9917, iter time: 197.43ms remaining time: 18.16 hours.  or 0.76 days. 
+iter 209 step 6: loss 8.2787, iter time: 197.41ms remaining time: 18.16 hours.  or 0.76 days. 
+iter 210 step 6: loss 7.9830, iter time: 197.23ms remaining time: 18.16 hours.  or 0.76 days. 
+iter 211 step 6: loss 8.1486, iter time: 196.89ms remaining time: 18.15 hours.  or 0.76 days. 
+iter 212 step 6: loss 7.9563, iter time: 196.62ms remaining time: 18.15 hours.  or 0.76 days. 
+iter 213 step 6: loss 7.9334, iter time: 197.38ms remaining time: 18.15 hours.  or 0.76 days. 
+iter 214 step 6: loss 8.0242, iter time: 197.69ms remaining time: 18.15 hours.  or 0.76 days. 
+iter 215 step 6: loss 7.8921, iter time: 199.22ms remaining time: 18.14 hours.  or 0.76 days. 
+iter 216 step 6: loss 7.9604, iter time: 196.08ms remaining time: 18.14 hours.  or 0.76 days. 
+iter 217 step 6: loss 8.0399, iter time: 197.29ms remaining time: 18.14 hours.  or 0.76 days. 
+iter 218 step 6: loss 8.0371, iter time: 196.45ms remaining time: 18.14 hours.  or 0.76 days. 
+iter 219 step 6: loss 7.7708, iter time: 197.25ms remaining time: 18.13 hours.  or 0.76 days. 
+iter 220 step 6: loss 8.0781, iter time: 197.62ms remaining time: 18.13 hours.  or 0.76 days. 
+iter 221 step 6: loss 8.0901, iter time: 197.36ms remaining time: 18.13 hours.  or 0.76 days. 
+iter 222 step 6: loss 8.0106, iter time: 197.82ms remaining time: 18.13 hours.  or 0.76 days. 
+iter 223 step 6: loss 8.0591, iter time: 197.06ms remaining time: 18.13 hours.  or 0.76 days. 
+Gradient norm:  tensor(31.3757, device='cuda:0')
+iter 224 step 7: loss 8.0681, iter time: 207.37ms (optimizer.step) remaining time: 18.13 hours.  or 0.76 days. 
+iter 225 step 7: loss 8.1749, iter time: 196.39ms remaining time: 18.13 hours.  or 0.76 days. 
+iter 226 step 7: loss 8.1380, iter time: 197.60ms remaining time: 18.12 hours.  or 0.76 days. 
+iter 227 step 7: loss 8.3571, iter time: 196.55ms remaining time: 18.12 hours.  or 0.76 days. 
+iter 228 step 7: loss 8.2840, iter time: 196.99ms remaining time: 18.12 hours.  or 0.75 days. 
+iter 229 step 7: loss 8.2480, iter time: 196.90ms remaining time: 18.12 hours.  or 0.75 days. 
+iter 230 step 7: loss 8.2128, iter time: 197.65ms remaining time: 18.12 hours.  or 0.75 days. 
+iter 231 step 7: loss 8.2213, iter time: 198.75ms remaining time: 18.11 hours.  or 0.75 days. 
+iter 232 step 7: loss 8.2684, iter time: 197.39ms remaining time: 18.11 hours.  or 0.75 days. 
+iter 233 step 7: loss 8.2673, iter time: 196.55ms remaining time: 18.11 hours.  or 0.75 days. 
+iter 234 step 7: loss 8.2805, iter time: 197.66ms remaining time: 18.11 hours.  or 0.75 days. 
+iter 235 step 7: loss 8.1572, iter time: 197.61ms remaining time: 18.11 hours.  or 0.75 days. 
+iter 236 step 7: loss 8.3543, iter time: 196.59ms remaining time: 18.11 hours.  or 0.75 days. 
+iter 237 step 7: loss 8.2508, iter time: 196.81ms remaining time: 18.10 hours.  or 0.75 days. 
+iter 238 step 7: loss 8.2863, iter time: 197.27ms remaining time: 18.10 hours.  or 0.75 days. 
+iter 239 step 7: loss 8.2082, iter time: 197.22ms remaining time: 18.10 hours.  or 0.75 days. 
+iter 240 step 7: loss 8.3206, iter time: 197.84ms remaining time: 18.10 hours.  or 0.75 days. 
+iter 241 step 7: loss 8.2068, iter time: 197.42ms remaining time: 18.10 hours.  or 0.75 days. 
+iter 242 step 7: loss 8.4906, iter time: 196.85ms remaining time: 18.09 hours.  or 0.75 days. 
+iter 243 step 7: loss 8.2960, iter time: 196.59ms remaining time: 18.09 hours.  or 0.75 days. 
+iter 244 step 7: loss 8.1141, iter time: 197.23ms remaining time: 18.09 hours.  or 0.75 days. 
+iter 245 step 7: loss 8.1628, iter time: 197.67ms remaining time: 18.09 hours.  or 0.75 days. 
+iter 246 step 7: loss 8.2211, iter time: 198.25ms remaining time: 18.09 hours.  or 0.75 days. 
+iter 247 step 7: loss 8.2382, iter time: 197.47ms remaining time: 18.09 hours.  or 0.75 days. 
+iter 248 step 7: loss 8.0202, iter time: 197.17ms remaining time: 18.08 hours.  or 0.75 days. 
+iter 249 step 7: loss 8.2382, iter time: 196.61ms remaining time: 18.08 hours.  or 0.75 days. 
+iter 250 step 7: loss 8.2853, iter time: 197.41ms remaining time: 18.08 hours.  or 0.75 days. 
+iter 251 step 7: loss 8.1082, iter time: 196.69ms remaining time: 18.08 hours.  or 0.75 days. 
+iter 252 step 7: loss 8.1614, iter time: 198.31ms remaining time: 18.08 hours.  or 0.75 days. 
+iter 253 step 7: loss 8.2139, iter time: 198.11ms remaining time: 18.07 hours.  or 0.75 days. 
+iter 254 step 7: loss 8.2392, iter time: 198.50ms remaining time: 18.07 hours.  or 0.75 days. 
+iter 255 step 7: loss 8.2945, iter time: 197.59ms remaining time: 18.07 hours.  or 0.75 days. 
+Gradient norm:  tensor(59.5772, device='cuda:0')
+iter 256 step 8: loss 8.2654, iter time: 209.25ms (optimizer.step) remaining time: 18.07 hours.  or 0.75 days. 
+iter 257 step 8: loss 8.4263, iter time: 197.28ms remaining time: 18.07 hours.  or 0.75 days. 
+iter 258 step 8: loss 8.5384, iter time: 197.89ms remaining time: 18.07 hours.  or 0.75 days. 
+iter 259 step 8: loss 8.2916, iter time: 197.55ms remaining time: 18.07 hours.  or 0.75 days. 
+iter 260 step 8: loss 8.3848, iter time: 197.17ms remaining time: 18.07 hours.  or 0.75 days. 
+iter 261 step 8: loss 8.3127, iter time: 198.10ms remaining time: 18.07 hours.  or 0.75 days. 
+iter 262 step 8: loss 8.4004, iter time: 197.35ms remaining time: 18.06 hours.  or 0.75 days. 
+iter 263 step 8: loss 8.5564, iter time: 197.89ms remaining time: 18.06 hours.  or 0.75 days. 
+iter 264 step 8: loss 8.2554, iter time: 198.46ms remaining time: 18.06 hours.  or 0.75 days. 
+iter 265 step 8: loss 8.4438, iter time: 198.13ms remaining time: 18.06 hours.  or 0.75 days. 
+iter 266 step 8: loss 8.3934, iter time: 198.33ms remaining time: 18.06 hours.  or 0.75 days. 
+iter 267 step 8: loss 8.3894, iter time: 197.96ms remaining time: 18.06 hours.  or 0.75 days. 
+iter 268 step 8: loss 8.7100, iter time: 198.08ms remaining time: 18.06 hours.  or 0.75 days. 
+iter 269 step 8: loss 8.5840, iter time: 197.38ms remaining time: 18.06 hours.  or 0.75 days. 
+iter 270 step 8: loss 8.3310, iter time: 197.28ms remaining time: 18.06 hours.  or 0.75 days. 
+iter 271 step 8: loss 8.6984, iter time: 197.32ms remaining time: 18.06 hours.  or 0.75 days. 
+iter 272 step 8: loss 8.4994, iter time: 197.10ms remaining time: 18.05 hours.  or 0.75 days. 
+iter 273 step 8: loss 8.2222, iter time: 197.12ms remaining time: 18.05 hours.  or 0.75 days. 
+iter 274 step 8: loss 8.3378, iter time: 196.87ms remaining time: 18.05 hours.  or 0.75 days. 
+iter 275 step 8: loss 8.4627, iter time: 197.71ms remaining time: 18.05 hours.  or 0.75 days. 
+iter 276 step 8: loss 8.3595, iter time: 197.62ms remaining time: 18.05 hours.  or 0.75 days. 
+iter 277 step 8: loss 8.4154, iter time: 196.73ms remaining time: 18.05 hours.  or 0.75 days. 
+iter 278 step 8: loss 8.4339, iter time: 197.49ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 279 step 8: loss 8.4058, iter time: 196.76ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 280 step 8: loss 8.7424, iter time: 196.57ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 281 step 8: loss 8.5207, iter time: 197.67ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 282 step 8: loss 8.3737, iter time: 197.27ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 283 step 8: loss 8.2034, iter time: 198.08ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 284 step 8: loss 8.3936, iter time: 197.19ms remaining time: 18.03 hours.  or 0.75 days. 
+iter 285 step 8: loss 8.3958, iter time: 197.68ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 286 step 8: loss 8.4671, iter time: 197.52ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 287 step 8: loss 8.4760, iter time: 199.69ms remaining time: 18.04 hours.  or 0.75 days. 
+Gradient norm:  tensor(33.3882, device='cuda:0')
+iter 288 step 9: loss 8.4251, iter time: 208.10ms (optimizer.step) remaining time: 18.04 hours.  or 0.75 days. 
+iter 289 step 9: loss 8.2108, iter time: 197.22ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 290 step 9: loss 8.2930, iter time: 199.68ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 291 step 9: loss 8.3107, iter time: 196.35ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 292 step 9: loss 8.2811, iter time: 197.34ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 293 step 9: loss 8.3057, iter time: 197.43ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 294 step 9: loss 8.3851, iter time: 197.22ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 295 step 9: loss 8.2031, iter time: 197.16ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 296 step 9: loss 8.1996, iter time: 197.83ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 297 step 9: loss 8.3151, iter time: 196.81ms remaining time: 18.04 hours.  or 0.75 days. 
+iter 298 step 9: loss 8.2005, iter time: 196.12ms remaining time: 18.03 hours.  or 0.75 days. 
+iter 299 step 9: loss 8.2748, iter time: 195.92ms remaining time: 18.03 hours.  or 0.75 days. 
+iter 300 step 9: loss 8.3295, iter time: 196.89ms remaining time: 18.03 hours.  or 0.75 days. 
+iter 301 step 9: loss 8.3572, iter time: 197.21ms remaining time: 18.03 hours.  or 0.75 days. 
+iter 302 step 9: loss 8.1758, iter time: 197.42ms remaining time: 18.03 hours.  or 0.75 days. 
+iter 303 step 9: loss 8.3536, iter time: 197.45ms remaining time: 18.03 hours.  or 0.75 days. 
+iter 304 step 9: loss 8.2941, iter time: 196.64ms remaining time: 18.03 hours.  or 0.75 days. 
+iter 305 step 9: loss 8.2358, iter time: 197.66ms remaining time: 18.02 hours.  or 0.75 days. 
+iter 306 step 9: loss 8.3784, iter time: 196.78ms remaining time: 18.02 hours.  or 0.75 days. 
+iter 307 step 9: loss 8.3084, iter time: 197.46ms remaining time: 18.02 hours.  or 0.75 days. 
+iter 308 step 9: loss 8.1784, iter time: 197.41ms remaining time: 18.02 hours.  or 0.75 days. 
+iter 309 step 9: loss 8.3067, iter time: 196.76ms remaining time: 18.02 hours.  or 0.75 days. 
+iter 310 step 9: loss 8.3186, iter time: 197.73ms remaining time: 18.02 hours.  or 0.75 days. 
+iter 311 step 9: loss 8.3018, iter time: 196.47ms remaining time: 18.02 hours.  or 0.75 days. 
+iter 312 step 9: loss 8.2793, iter time: 196.35ms remaining time: 18.02 hours.  or 0.75 days. 
+iter 313 step 9: loss 8.2582, iter time: 197.09ms remaining time: 18.01 hours.  or 0.75 days. 
+iter 314 step 9: loss 8.3494, iter time: 197.40ms remaining time: 18.01 hours.  or 0.75 days. 
+iter 315 step 9: loss 8.3014, iter time: 197.50ms remaining time: 18.01 hours.  or 0.75 days. 
+iter 316 step 9: loss 8.2600, iter time: 196.83ms remaining time: 18.01 hours.  or 0.75 days. 
+iter 317 step 9: loss 8.2780, iter time: 198.57ms remaining time: 18.01 hours.  or 0.75 days. 
+iter 318 step 9: loss 8.3678, iter time: 199.37ms remaining time: 18.01 hours.  or 0.75 days. 
+iter 319 step 9: loss 8.3850, iter time: 198.88ms remaining time: 18.01 hours.  or 0.75 days. 
+Gradient norm:  tensor(65.9790, device='cuda:0')
+iter 320 step 10: loss 8.3253, iter time: 207.91ms (optimizer.step) remaining time: 18.01 hours.  or 0.75 days. 
+iter 321 step 10: loss 8.2243, iter time: 195.61ms remaining time: 18.01 hours.  or 0.75 days. 
+iter 322 step 10: loss 8.1248, iter time: 198.15ms remaining time: 18.01 hours.  or 0.75 days. 
+iter 323 step 10: loss 8.2342, iter time: 197.50ms remaining time: 18.00 hours.  or 0.75 days. 
+iter 324 step 10: loss 8.0487, iter time: 196.81ms remaining time: 18.00 hours.  or 0.75 days. 
+iter 325 step 10: loss 8.3085, iter time: 196.48ms remaining time: 18.00 hours.  or 0.75 days. 
+iter 326 step 10: loss 8.2299, iter time: 196.77ms remaining time: 18.00 hours.  or 0.75 days. 
+iter 327 step 10: loss 8.2238, iter time: 197.37ms remaining time: 18.00 hours.  or 0.75 days. 
+iter 328 step 10: loss 8.2064, iter time: 197.51ms remaining time: 18.00 hours.  or 0.75 days. 
+iter 329 step 10: loss 8.3858, iter time: 197.35ms remaining time: 18.00 hours.  or 0.75 days. 
+iter 330 step 10: loss 8.1852, iter time: 198.33ms remaining time: 18.00 hours.  or 0.75 days. 
+iter 331 step 10: loss 8.2328, iter time: 196.66ms remaining time: 18.00 hours.  or 0.75 days. 
+iter 332 step 10: loss 8.4791, iter time: 196.88ms remaining time: 17.99 hours.  or 0.75 days. 
+iter 333 step 10: loss 8.0845, iter time: 197.43ms remaining time: 17.99 hours.  or 0.75 days. 
+iter 334 step 10: loss 8.2979, iter time: 197.18ms remaining time: 17.99 hours.  or 0.75 days. 
+iter 335 step 10: loss 8.2654, iter time: 197.07ms remaining time: 17.99 hours.  or 0.75 days. 
+iter 336 step 10: loss 7.9588, iter time: 196.54ms remaining time: 17.99 hours.  or 0.75 days. 
+iter 337 step 10: loss 8.0319, iter time: 197.06ms remaining time: 17.99 hours.  or 0.75 days. 
+iter 338 step 10: loss 8.0586, iter time: 196.71ms remaining time: 17.99 hours.  or 0.75 days. 
+iter 339 step 10: loss 8.1676, iter time: 198.62ms remaining time: 17.99 hours.  or 0.75 days. 
+iter 340 step 10: loss 8.1920, iter time: 198.15ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 341 step 10: loss 8.1562, iter time: 198.70ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 342 step 10: loss 8.2794, iter time: 197.51ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 343 step 10: loss 8.2648, iter time: 197.41ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 344 step 10: loss 8.1271, iter time: 197.09ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 345 step 10: loss 8.2682, iter time: 197.97ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 346 step 10: loss 8.1288, iter time: 198.97ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 347 step 10: loss 8.1286, iter time: 197.88ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 348 step 10: loss 8.0483, iter time: 198.45ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 349 step 10: loss 8.2179, iter time: 199.11ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 350 step 10: loss 8.2564, iter time: 197.39ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 351 step 10: loss 8.3709, iter time: 197.78ms remaining time: 17.98 hours.  or 0.75 days. 
+Gradient norm:  tensor(17.7266, device='cuda:0')
+iter 352 step 11: loss 8.1772, iter time: 207.84ms (optimizer.step) remaining time: 17.98 hours.  or 0.75 days. 
+iter 353 step 11: loss 8.1281, iter time: 196.46ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 354 step 11: loss 8.1165, iter time: 197.61ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 355 step 11: loss 8.2419, iter time: 197.35ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 356 step 11: loss 8.3926, iter time: 197.74ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 357 step 11: loss 8.2544, iter time: 197.73ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 358 step 11: loss 8.1444, iter time: 197.97ms remaining time: 17.98 hours.  or 0.75 days. 
+iter 359 step 11: loss 8.1924, iter time: 197.76ms remaining time: 17.97 hours.  or 0.75 days. 
+iter 360 step 11: loss 8.2029, iter time: 197.72ms remaining time: 17.97 hours.  or 0.75 days. 
+iter 361 step 11: loss 8.2706, iter time: 197.09ms remaining time: 17.97 hours.  or 0.75 days. 
+iter 362 step 11: loss 8.2603, iter time: 197.11ms remaining time: 17.97 hours.  or 0.75 days. 
+iter 363 step 11: loss 8.0690, iter time: 196.35ms remaining time: 17.97 hours.  or 0.75 days. 
+iter 364 step 11: loss 8.1652, iter time: 197.66ms remaining time: 17.97 hours.  or 0.75 days. 
+iter 365 step 11: loss 8.3440, iter time: 197.19ms remaining time: 17.97 hours.  or 0.75 days. 
+iter 366 step 11: loss 8.0917, iter time: 197.76ms remaining time: 17.97 hours.  or 0.75 days. 
+iter 367 step 11: loss 8.1109, iter time: 196.72ms remaining time: 17.97 hours.  or 0.75 days. 
+iter 368 step 11: loss 8.1767, iter time: 196.78ms remaining time: 17.97 hours.  or 0.75 days. 
+iter 369 step 11: loss 8.2169, iter time: 197.17ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 370 step 11: loss 8.3467, iter time: 196.71ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 371 step 11: loss 8.1312, iter time: 197.00ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 372 step 11: loss 8.1545, iter time: 197.88ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 373 step 11: loss 8.3542, iter time: 197.59ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 374 step 11: loss 8.1409, iter time: 197.41ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 375 step 11: loss 8.1891, iter time: 197.01ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 376 step 11: loss 8.0638, iter time: 196.74ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 377 step 11: loss 8.2992, iter time: 197.41ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 378 step 11: loss 8.1947, iter time: 197.63ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 379 step 11: loss 8.2933, iter time: 197.63ms remaining time: 17.96 hours.  or 0.75 days. 
+iter 380 step 11: loss 8.2456, iter time: 196.92ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 381 step 11: loss 8.1565, iter time: 197.36ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 382 step 11: loss 8.3755, iter time: 196.52ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 383 step 11: loss 8.3156, iter time: 197.63ms remaining time: 17.95 hours.  or 0.75 days. 
+Gradient norm:  tensor(40.1040, device='cuda:0')
+iter 384 step 12: loss 8.2504, iter time: 208.20ms (optimizer.step) remaining time: 17.95 hours.  or 0.75 days. 
+iter 385 step 12: loss 8.0910, iter time: 195.83ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 386 step 12: loss 7.9191, iter time: 197.53ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 387 step 12: loss 8.0164, iter time: 197.49ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 388 step 12: loss 7.9460, iter time: 197.54ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 389 step 12: loss 8.0707, iter time: 197.59ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 390 step 12: loss 7.9333, iter time: 196.78ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 391 step 12: loss 8.0614, iter time: 196.63ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 392 step 12: loss 8.0043, iter time: 197.69ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 393 step 12: loss 7.8381, iter time: 197.02ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 394 step 12: loss 8.0664, iter time: 197.28ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 395 step 12: loss 8.1105, iter time: 196.86ms remaining time: 17.95 hours.  or 0.75 days. 
+iter 396 step 12: loss 7.7770, iter time: 197.72ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 397 step 12: loss 7.9052, iter time: 198.51ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 398 step 12: loss 8.0352, iter time: 198.02ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 399 step 12: loss 7.9276, iter time: 197.93ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 400 step 12: loss 7.8596, iter time: 197.82ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 401 step 12: loss 8.2701, iter time: 197.49ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 402 step 12: loss 8.0737, iter time: 198.40ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 403 step 12: loss 8.0593, iter time: 197.26ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 404 step 12: loss 8.0494, iter time: 196.94ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 405 step 12: loss 7.9522, iter time: 196.67ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 406 step 12: loss 8.0270, iter time: 196.80ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 407 step 12: loss 7.8524, iter time: 197.87ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 408 step 12: loss 7.9928, iter time: 197.28ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 409 step 12: loss 8.0633, iter time: 196.68ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 410 step 12: loss 8.0005, iter time: 196.16ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 411 step 12: loss 8.0347, iter time: 195.83ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 412 step 12: loss 7.9847, iter time: 194.93ms remaining time: 17.94 hours.  or 0.75 days. 
+iter 413 step 12: loss 7.9866, iter time: 194.85ms remaining time: 17.93 hours.  or 0.75 days. 
+iter 414 step 12: loss 7.8166, iter time: 196.53ms remaining time: 17.93 hours.  or 0.75 days. 
+iter 415 step 12: loss 7.9952, iter time: 195.69ms remaining time: 17.93 hours.  or 0.75 days. 
+Gradient norm:  tensor(5.8761, device='cuda:0')
+iter 416 step 13: loss 7.7862, iter time: 205.12ms (optimizer.step) remaining time: 17.93 hours.  or 0.75 days. 
+iter 417 step 13: loss 8.3053, iter time: 194.91ms remaining time: 17.93 hours.  or 0.75 days. 
+iter 418 step 13: loss 8.3420, iter time: 194.87ms remaining time: 17.93 hours.  or 0.75 days. 
+iter 419 step 13: loss 8.2846, iter time: 195.91ms remaining time: 17.93 hours.  or 0.75 days. 
+iter 420 step 13: loss 8.3198, iter time: 195.54ms remaining time: 17.93 hours.  or 0.75 days. 
+iter 421 step 13: loss 8.2740, iter time: 195.56ms remaining time: 17.93 hours.  or 0.75 days. 
+iter 422 step 13: loss 8.2932, iter time: 194.74ms remaining time: 17.93 hours.  or 0.75 days. 
+iter 423 step 13: loss 8.3585, iter time: 194.77ms remaining time: 17.92 hours.  or 0.75 days. 
+iter 424 step 13: loss 8.2222, iter time: 194.65ms remaining time: 17.92 hours.  or 0.75 days. 
+iter 425 step 13: loss 8.2633, iter time: 195.57ms remaining time: 17.92 hours.  or 0.75 days. 
+iter 426 step 13: loss 8.2652, iter time: 197.31ms remaining time: 17.92 hours.  or 0.75 days. 
+iter 427 step 13: loss 8.3492, iter time: 194.81ms remaining time: 17.92 hours.  or 0.75 days. 
+iter 428 step 13: loss 8.3482, iter time: 194.65ms remaining time: 17.92 hours.  or 0.75 days. 
+iter 429 step 13: loss 8.2014, iter time: 195.67ms remaining time: 17.92 hours.  or 0.75 days. 
+iter 430 step 13: loss 8.2472, iter time: 195.57ms remaining time: 17.92 hours.  or 0.75 days. 
+iter 431 step 13: loss 8.4517, iter time: 197.44ms remaining time: 17.92 hours.  or 0.75 days. 
+iter 432 step 13: loss 8.2794, iter time: 194.65ms remaining time: 17.91 hours.  or 0.75 days. 
+iter 433 step 13: loss 8.3800, iter time: 195.81ms remaining time: 17.92 hours.  or 0.75 days. 
+iter 434 step 13: loss 8.3204, iter time: 194.94ms remaining time: 17.91 hours.  or 0.75 days. 
+iter 435 step 13: loss 8.3134, iter time: 195.11ms remaining time: 17.91 hours.  or 0.75 days. 
+iter 436 step 13: loss 8.2976, iter time: 194.24ms remaining time: 17.91 hours.  or 0.75 days. 
+iter 437 step 13: loss 8.3110, iter time: 195.17ms remaining time: 17.91 hours.  or 0.75 days. 
+iter 438 step 13: loss 8.1987, iter time: 195.69ms remaining time: 17.91 hours.  or 0.75 days. 
+iter 439 step 13: loss 8.2288, iter time: 195.38ms remaining time: 17.91 hours.  or 0.75 days. 
+iter 440 step 13: loss 8.2798, iter time: 195.36ms remaining time: 17.91 hours.  or 0.75 days. 
+iter 441 step 13: loss 8.1581, iter time: 194.70ms remaining time: 17.91 hours.  or 0.75 days. 
+iter 442 step 13: loss 8.2853, iter time: 195.45ms remaining time: 17.90 hours.  or 0.75 days. 
+iter 443 step 13: loss 8.2298, iter time: 195.45ms remaining time: 17.90 hours.  or 0.75 days. 
+iter 444 step 13: loss 8.3737, iter time: 194.69ms remaining time: 17.90 hours.  or 0.75 days. 
+iter 445 step 13: loss 8.2166, iter time: 195.81ms remaining time: 17.90 hours.  or 0.75 days. 
+iter 446 step 13: loss 8.3385, iter time: 195.44ms remaining time: 17.90 hours.  or 0.75 days. 
+iter 447 step 13: loss 8.2194, iter time: 195.57ms remaining time: 17.90 hours.  or 0.75 days. 
+Gradient norm:  tensor(3.0093, device='cuda:0')
+iter 448 step 14: loss 8.4013, iter time: 204.96ms (optimizer.step) remaining time: 17.90 hours.  or 0.75 days. 
+iter 449 step 14: loss 8.9760, iter time: 194.38ms remaining time: 17.90 hours.  or 0.75 days. 
+iter 450 step 14: loss 9.1201, iter time: 194.76ms remaining time: 17.90 hours.  or 0.75 days. 
+iter 451 step 14: loss 8.8138, iter time: 195.26ms remaining time: 17.90 hours.  or 0.75 days. 
+iter 452 step 14: loss 9.2254, iter time: 195.58ms remaining time: 17.90 hours.  or 0.75 days. 
+iter 453 step 14: loss 9.0739, iter time: 195.32ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 454 step 14: loss 8.8965, iter time: 195.07ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 455 step 14: loss 8.9961, iter time: 195.34ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 456 step 14: loss 9.0701, iter time: 195.61ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 457 step 14: loss 9.1093, iter time: 196.70ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 458 step 14: loss 9.1598, iter time: 194.95ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 459 step 14: loss 9.2457, iter time: 195.21ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 460 step 14: loss 9.0922, iter time: 195.42ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 461 step 14: loss 9.1608, iter time: 195.73ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 462 step 14: loss 9.1309, iter time: 194.84ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 463 step 14: loss 9.2740, iter time: 194.63ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 464 step 14: loss 9.1262, iter time: 196.49ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 465 step 14: loss 9.0261, iter time: 195.59ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 466 step 14: loss 9.3254, iter time: 195.27ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 467 step 14: loss 9.1128, iter time: 195.20ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 468 step 14: loss 9.2327, iter time: 195.11ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 469 step 14: loss 9.0109, iter time: 196.81ms remaining time: 17.88 hours.  or 0.74 days. 
+iter 470 step 14: loss 9.0116, iter time: 195.73ms remaining time: 17.88 hours.  or 0.74 days. 
+iter 471 step 14: loss 9.0002, iter time: 194.95ms remaining time: 17.88 hours.  or 0.74 days. 
+iter 472 step 14: loss 9.0262, iter time: 195.09ms remaining time: 17.88 hours.  or 0.74 days. 
+iter 473 step 14: loss 9.1190, iter time: 195.51ms remaining time: 17.88 hours.  or 0.74 days. 
+iter 474 step 14: loss 8.9825, iter time: 196.57ms remaining time: 17.88 hours.  or 0.74 days. 
+iter 475 step 14: loss 9.1574, iter time: 194.88ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 476 step 14: loss 8.9656, iter time: 194.71ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 477 step 14: loss 9.1800, iter time: 195.61ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 478 step 14: loss 9.0846, iter time: 195.44ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 479 step 14: loss 9.1762, iter time: 194.82ms remaining time: 17.87 hours.  or 0.74 days. 
+Gradient norm:  tensor(15.5158, device='cuda:0')
+iter 480 step 15: loss 9.1026, iter time: 204.81ms (optimizer.step) remaining time: 17.87 hours.  or 0.74 days. 
+iter 481 step 15: loss 9.3662, iter time: 195.15ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 482 step 15: loss 9.3285, iter time: 194.58ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 483 step 15: loss 9.2534, iter time: 194.74ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 484 step 15: loss 9.1792, iter time: 195.66ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 485 step 15: loss 9.2823, iter time: 195.66ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 486 step 15: loss 9.2918, iter time: 195.03ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 487 step 15: loss 9.4472, iter time: 194.80ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 488 step 15: loss 9.5639, iter time: 195.49ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 489 step 15: loss 9.1831, iter time: 195.73ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 490 step 15: loss 9.3096, iter time: 195.18ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 491 step 15: loss 9.3681, iter time: 194.92ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 492 step 15: loss 9.4112, iter time: 195.62ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 493 step 15: loss 9.2927, iter time: 195.72ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 494 step 15: loss 9.3797, iter time: 194.96ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 495 step 15: loss 9.3501, iter time: 194.93ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 496 step 15: loss 9.2453, iter time: 195.53ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 497 step 15: loss 9.2274, iter time: 195.56ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 498 step 15: loss 9.2665, iter time: 195.32ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 499 step 15: loss 9.3023, iter time: 195.07ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 500 step 15: loss 9.3136, iter time: 195.84ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 501 step 15: loss 9.1777, iter time: 195.92ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 502 step 15: loss 9.2679, iter time: 195.81ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 503 step 15: loss 9.4919, iter time: 195.98ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 504 step 15: loss 9.3282, iter time: 194.90ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 505 step 15: loss 9.4452, iter time: 195.98ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 506 step 15: loss 9.3574, iter time: 195.57ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 507 step 15: loss 9.2537, iter time: 195.21ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 508 step 15: loss 9.2693, iter time: 194.67ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 509 step 15: loss 9.3979, iter time: 194.17ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 510 step 15: loss 9.2771, iter time: 194.80ms remaining time: 17.85 hours.  or 0.74 days. 
+iter 511 step 15: loss 9.2364, iter time: 195.07ms remaining time: 17.85 hours.  or 0.74 days. 
+Gradient norm:  tensor(34.1252, device='cuda:0')
+iter 512 step 16: loss 9.2875, iter time: 205.37ms (optimizer.step) remaining time: 17.85 hours.  or 0.74 days. 
+iter 513 step 16: loss nan, iter time: 192.84ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 514 step 16: loss nan, iter time: 193.64ms remaining time: 17.86 hours.  or 0.74 days. 
+iter 515 step 16: loss nan, iter time: 194.75ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 516 step 16: loss nan, iter time: 195.22ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 517 step 16: loss nan, iter time: 195.17ms remaining time: 17.87 hours.  or 0.74 days. 
+iter 518 step 16: loss nan, iter time: 198.35ms remaining time: 17.88 hours.  or 0.74 days. 
+iter 519 step 16: loss nan, iter time: 196.98ms remaining time: 17.88 hours.  or 0.74 days. 
+iter 520 step 16: loss nan, iter time: 197.17ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 521 step 16: loss nan, iter time: 195.50ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 522 step 16: loss nan, iter time: 193.73ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 523 step 16: loss nan, iter time: 193.98ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 524 step 16: loss nan, iter time: 194.60ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 525 step 16: loss nan, iter time: 194.63ms remaining time: 17.88 hours.  or 0.75 days. 
+iter 526 step 16: loss nan, iter time: 194.45ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 527 step 16: loss nan, iter time: 195.13ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 528 step 16: loss nan, iter time: 194.44ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 529 step 16: loss nan, iter time: 194.87ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 530 step 16: loss nan, iter time: 194.95ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 531 step 16: loss nan, iter time: 194.27ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 532 step 16: loss nan, iter time: 194.25ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 533 step 16: loss nan, iter time: 194.59ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 534 step 16: loss nan, iter time: 194.57ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 535 step 16: loss nan, iter time: 194.46ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 536 step 16: loss nan, iter time: 194.86ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 537 step 16: loss nan, iter time: 198.28ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 538 step 16: loss nan, iter time: 195.26ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 539 step 16: loss nan, iter time: 195.43ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 540 step 16: loss nan, iter time: 193.87ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 541 step 16: loss nan, iter time: 193.89ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 542 step 16: loss nan, iter time: 193.82ms remaining time: 17.89 hours.  or 0.75 days. 
+iter 543 step 16: loss nan, iter time: 194.09ms remaining time: 17.89 hours.  or 0.75 days. 
+Gradient norm:  tensor(nan, device='cuda:0')
+
+===================================BUG REPORT===================================
+Welcome to bitsandbytes. For bug reports, please run
+
+python -m bitsandbytes
+
+ and submit this information together with your error trace to: https://github.com/TimDettmers/bitsandbytes/issues
+================================================================================
+bin /opt/conda/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so
+CUDA SETUP: CUDA runtime path found: /usr/local/cuda/lib64/libcudart.so
+CUDA SETUP: Highest compute capability among GPUs detected: 8.0
+CUDA SETUP: Detected CUDA version 118
+CUDA SETUP: Loading binary /opt/conda/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so...
