@@ -1320,3 +1320,130 @@ iter 1291 step 10: loss nan, iter time: 735.37ms remaining time: 268.40 hours.  
 iter 1292 step 10: loss nan, iter time: 736.69ms remaining time: 268.40 hours.  or 11.18 days. 
 iter 1293 step 10: loss nan, iter time: 736.83ms remaining time: 268.39 hours.  or 11.18 days. 
 iter 1294 step 10: loss nan, iter time: 738.59ms remaining time: 268.39 hours.  or 11.18 days. 
+iter 1295 step 10: loss nan, iter time: 736.54ms remaining time: 268.38 hours.  or 11.18 days. 
+iter 1296 step 10: loss nan, iter time: 736.44ms remaining time: 268.38 hours.  or 11.18 days. 
+iter 1297 step 10: loss nan, iter time: 738.73ms remaining time: 268.37 hours.  or 11.18 days. 
+iter 1298 step 10: loss nan, iter time: 737.50ms remaining time: 268.37 hours.  or 11.18 days. 
+iter 1299 step 10: loss nan, iter time: 735.34ms remaining time: 268.36 hours.  or 11.18 days. 
+iter 1300 step 10: loss nan, iter time: 735.70ms remaining time: 268.36 hours.  or 11.18 days. 
+iter 1301 step 10: loss nan, iter time: 734.24ms remaining time: 268.35 hours.  or 11.18 days. 
+iter 1302 step 10: loss nan, iter time: 737.40ms remaining time: 268.35 hours.  or 11.18 days. 
+iter 1303 step 10: loss nan, iter time: 735.41ms remaining time: 268.34 hours.  or 11.18 days. 
+iter 1304 step 10: loss nan, iter time: 737.07ms remaining time: 268.34 hours.  or 11.18 days. 
+iter 1305 step 10: loss nan, iter time: 733.57ms remaining time: 268.33 hours.  or 11.18 days. 
+iter 1306 step 10: loss nan, iter time: 735.70ms remaining time: 268.33 hours.  or 11.18 days. 
+iter 1307 step 10: loss nan, iter time: 736.14ms remaining time: 268.32 hours.  or 11.18 days. 
+iter 1308 step 10: loss nan, iter time: 736.20ms remaining time: 268.31 hours.  or 11.18 days. 
+iter 1309 step 10: loss nan, iter time: 735.95ms remaining time: 268.31 hours.  or 11.18 days. 
+iter 1310 step 10: loss nan, iter time: 738.08ms remaining time: 268.31 hours.  or 11.18 days. 
+iter 1311 step 10: loss nan, iter time: 735.22ms remaining time: 268.30 hours.  or 11.18 days. 
+iter 1312 step 10: loss nan, iter time: 736.42ms remaining time: 268.30 hours.  or 11.18 days. 
+iter 1313 step 10: loss nan, iter time: 736.57ms remaining time: 268.29 hours.  or 11.18 days. 
+iter 1314 step 10: loss nan, iter time: 735.90ms remaining time: 268.29 hours.  or 11.18 days. 
+iter 1315 step 10: loss nan, iter time: 734.96ms remaining time: 268.28 hours.  or 11.18 days. 
+iter 1316 step 10: loss nan, iter time: 736.52ms remaining time: 268.27 hours.  or 11.18 days. 
+iter 1317 step 10: loss nan, iter time: 737.45ms remaining time: 268.27 hours.  or 11.18 days. 
+iter 1318 step 10: loss nan, iter time: 736.76ms remaining time: 268.27 hours.  or 11.18 days. 
+iter 1319 step 10: loss nan, iter time: 735.29ms remaining time: 268.26 hours.  or 11.18 days. 
+iter 1320 step 10: loss nan, iter time: 735.86ms remaining time: 268.25 hours.  or 11.18 days. 
+iter 1321 step 10: loss nan, iter time: 737.02ms remaining time: 268.25 hours.  or 11.18 days. 
+iter 1322 step 10: loss nan, iter time: 736.78ms remaining time: 268.25 hours.  or 11.18 days. 
+iter 1323 step 10: loss nan, iter time: 735.51ms remaining time: 268.24 hours.  or 11.18 days. 
+iter 1324 step 10: loss nan, iter time: 736.62ms remaining time: 268.24 hours.  or 11.18 days. 
+iter 1325 step 10: loss nan, iter time: 735.70ms remaining time: 268.23 hours.  or 11.18 days. 
+iter 1326 step 10: loss nan, iter time: 737.06ms remaining time: 268.23 hours.  or 11.18 days. 
+iter 1327 step 10: loss nan, iter time: 736.42ms remaining time: 268.22 hours.  or 11.18 days. 
+iter 1328 step 10: loss nan, iter time: 737.38ms remaining time: 268.22 hours.  or 11.18 days. 
+iter 1329 step 10: loss nan, iter time: 736.76ms remaining time: 268.21 hours.  or 11.18 days. 
+iter 1330 step 10: loss nan, iter time: 734.66ms remaining time: 268.21 hours.  or 11.18 days. 
+iter 1331 step 10: loss nan, iter time: 735.95ms remaining time: 268.20 hours.  or 11.18 days. 
+iter 1332 step 10: loss nan, iter time: 735.61ms remaining time: 268.20 hours.  or 11.17 days. 
+iter 1333 step 10: loss nan, iter time: 738.40ms remaining time: 268.19 hours.  or 11.17 days. 
+iter 1334 step 10: loss nan, iter time: 737.84ms remaining time: 268.19 hours.  or 11.17 days. 
+iter 1335 step 10: loss nan, iter time: 735.82ms remaining time: 268.18 hours.  or 11.17 days. 
+iter 1336 step 10: loss nan, iter time: 734.45ms remaining time: 268.18 hours.  or 11.17 days. 
+iter 1337 step 10: loss nan, iter time: 735.09ms remaining time: 268.17 hours.  or 11.17 days. 
+iter 1338 step 10: loss nan, iter time: 735.62ms remaining time: 268.17 hours.  or 11.17 days. 
+iter 1339 step 10: loss nan, iter time: 735.36ms remaining time: 268.16 hours.  or 11.17 days. 
+iter 1340 step 10: loss nan, iter time: 735.19ms remaining time: 268.16 hours.  or 11.17 days. 
+iter 1341 step 10: loss nan, iter time: 735.11ms remaining time: 268.15 hours.  or 11.17 days. 
+iter 1342 step 10: loss nan, iter time: 733.87ms remaining time: 268.15 hours.  or 11.17 days. 
+iter 1343 step 10: loss nan, iter time: 735.89ms remaining time: 268.14 hours.  or 11.17 days. 
+iter 1344 step 10: loss nan, iter time: 734.73ms remaining time: 268.14 hours.  or 11.17 days. 
+iter 1345 step 10: loss nan, iter time: 733.99ms remaining time: 268.13 hours.  or 11.17 days. 
+iter 1346 step 10: loss nan, iter time: 735.79ms remaining time: 268.13 hours.  or 11.17 days. 
+iter 1347 step 10: loss nan, iter time: 735.11ms remaining time: 268.12 hours.  or 11.17 days. 
+iter 1348 step 10: loss nan, iter time: 735.63ms remaining time: 268.12 hours.  or 11.17 days. 
+iter 1349 step 10: loss nan, iter time: 734.10ms remaining time: 268.11 hours.  or 11.17 days. 
+iter 1350 step 10: loss nan, iter time: 733.54ms remaining time: 268.11 hours.  or 11.17 days. 
+iter 1351 step 10: loss nan, iter time: 735.06ms remaining time: 268.10 hours.  or 11.17 days. 
+iter 1352 step 10: loss nan, iter time: 733.49ms remaining time: 268.09 hours.  or 11.17 days. 
+iter 1353 step 10: loss nan, iter time: 735.21ms remaining time: 268.09 hours.  or 11.17 days. 
+iter 1354 step 10: loss nan, iter time: 734.66ms remaining time: 268.08 hours.  or 11.17 days. 
+iter 1355 step 10: loss nan, iter time: 735.68ms remaining time: 268.08 hours.  or 11.17 days. 
+iter 1356 step 10: loss nan, iter time: 732.52ms remaining time: 268.07 hours.  or 11.17 days. 
+iter 1357 step 10: loss nan, iter time: 735.50ms remaining time: 268.07 hours.  or 11.17 days. 
+iter 1358 step 10: loss nan, iter time: 733.71ms remaining time: 268.06 hours.  or 11.17 days. 
+iter 1359 step 10: loss nan, iter time: 735.46ms remaining time: 268.06 hours.  or 11.17 days. 
+iter 1360 step 10: loss nan, iter time: 734.92ms remaining time: 268.05 hours.  or 11.17 days. 
+iter 1361 step 10: loss nan, iter time: 734.62ms remaining time: 268.05 hours.  or 11.17 days. 
+iter 1362 step 10: loss nan, iter time: 734.46ms remaining time: 268.04 hours.  or 11.17 days. 
+iter 1363 step 10: loss nan, iter time: 734.88ms remaining time: 268.04 hours.  or 11.17 days. 
+iter 1364 step 10: loss nan, iter time: 735.05ms remaining time: 268.03 hours.  or 11.17 days. 
+iter 1365 step 10: loss nan, iter time: 734.38ms remaining time: 268.03 hours.  or 11.17 days. 
+iter 1366 step 10: loss nan, iter time: 735.37ms remaining time: 268.02 hours.  or 11.17 days. 
+iter 1367 step 10: loss nan, iter time: 736.32ms remaining time: 268.02 hours.  or 11.17 days. 
+iter 1368 step 10: loss nan, iter time: 735.42ms remaining time: 268.01 hours.  or 11.17 days. 
+iter 1369 step 10: loss nan, iter time: 734.72ms remaining time: 268.01 hours.  or 11.17 days. 
+iter 1370 step 10: loss nan, iter time: 735.01ms remaining time: 268.00 hours.  or 11.17 days. 
+iter 1371 step 10: loss nan, iter time: 734.62ms remaining time: 268.00 hours.  or 11.17 days. 
+iter 1372 step 10: loss nan, iter time: 735.16ms remaining time: 267.99 hours.  or 11.17 days. 
+iter 1373 step 10: loss nan, iter time: 733.66ms remaining time: 267.99 hours.  or 11.17 days. 
+iter 1374 step 10: loss nan, iter time: 732.57ms remaining time: 267.98 hours.  or 11.17 days. 
+iter 1375 step 10: loss nan, iter time: 734.10ms remaining time: 267.98 hours.  or 11.17 days. 
+iter 1376 step 10: loss nan, iter time: 734.57ms remaining time: 267.97 hours.  or 11.17 days. 
+iter 1377 step 10: loss nan, iter time: 733.44ms remaining time: 267.97 hours.  or 11.17 days. 
+iter 1378 step 10: loss nan, iter time: 735.68ms remaining time: 267.96 hours.  or 11.17 days. 
+iter 1379 step 10: loss nan, iter time: 735.96ms remaining time: 267.96 hours.  or 11.16 days. 
+iter 1380 step 10: loss nan, iter time: 735.70ms remaining time: 267.95 hours.  or 11.16 days. 
+iter 1381 step 10: loss nan, iter time: 734.70ms remaining time: 267.95 hours.  or 11.16 days. 
+iter 1382 step 10: loss nan, iter time: 735.07ms remaining time: 267.94 hours.  or 11.16 days. 
+iter 1383 step 10: loss nan, iter time: 733.69ms remaining time: 267.94 hours.  or 11.16 days. 
+iter 1384 step 10: loss nan, iter time: 733.61ms remaining time: 267.93 hours.  or 11.16 days. 
+iter 1385 step 10: loss nan, iter time: 735.02ms remaining time: 267.93 hours.  or 11.16 days. 
+iter 1386 step 10: loss nan, iter time: 734.19ms remaining time: 267.92 hours.  or 11.16 days. 
+iter 1387 step 10: loss nan, iter time: 733.83ms remaining time: 267.92 hours.  or 11.16 days. 
+iter 1388 step 10: loss nan, iter time: 734.72ms remaining time: 267.91 hours.  or 11.16 days. 
+iter 1389 step 10: loss nan, iter time: 733.51ms remaining time: 267.91 hours.  or 11.16 days. 
+iter 1390 step 10: loss nan, iter time: 733.69ms remaining time: 267.90 hours.  or 11.16 days. 
+iter 1391 step 10: loss nan, iter time: 733.19ms remaining time: 267.90 hours.  or 11.16 days. 
+iter 1392 step 10: loss nan, iter time: 734.67ms remaining time: 267.89 hours.  or 11.16 days. 
+iter 1393 step 10: loss nan, iter time: 734.83ms remaining time: 267.89 hours.  or 11.16 days. 
+iter 1394 step 10: loss nan, iter time: 735.47ms remaining time: 267.88 hours.  or 11.16 days. 
+iter 1395 step 10: loss nan, iter time: 734.23ms remaining time: 267.88 hours.  or 11.16 days. 
+iter 1396 step 10: loss nan, iter time: 733.84ms remaining time: 267.87 hours.  or 11.16 days. 
+iter 1397 step 10: loss nan, iter time: 732.83ms remaining time: 267.87 hours.  or 11.16 days. 
+iter 1398 step 10: loss nan, iter time: 734.79ms remaining time: 267.86 hours.  or 11.16 days. 
+iter 1399 step 10: loss nan, iter time: 733.77ms remaining time: 267.86 hours.  or 11.16 days. 
+iter 1400 step 10: loss nan, iter time: 885.55ms remaining time: 267.89 hours.  or 11.16 days. 
+iter 1401 step 10: loss nan, iter time: 734.82ms remaining time: 267.89 hours.  or 11.16 days. 
+iter 1402 step 10: loss nan, iter time: 734.61ms remaining time: 267.88 hours.  or 11.16 days. 
+iter 1403 step 10: loss nan, iter time: 733.81ms remaining time: 267.88 hours.  or 11.16 days. 
+iter 1404 step 10: loss nan, iter time: 733.41ms remaining time: 267.87 hours.  or 11.16 days. 
+iter 1405 step 10: loss nan, iter time: 735.58ms remaining time: 267.87 hours.  or 11.16 days. 
+iter 1406 step 10: loss nan, iter time: 733.56ms remaining time: 267.86 hours.  or 11.16 days. 
+iter 1407 step 10: loss nan, iter time: 733.98ms remaining time: 267.86 hours.  or 11.16 days. 
+Gradient norm:  tensor(nan, device='cuda:0')
+
+===================================BUG REPORT===================================
+Welcome to bitsandbytes. For bug reports, please run
+
+python -m bitsandbytes
+
+ and submit this information together with your error trace to: https://github.com/TimDettmers/bitsandbytes/issues
+================================================================================
+bin /opt/conda/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so
+CUDA SETUP: CUDA runtime path found: /usr/local/cuda/lib64/libcudart.so.11.0
+CUDA SETUP: Highest compute capability among GPUs detected: 8.0
+CUDA SETUP: Detected CUDA version 118
+CUDA SETUP: Loading binary /opt/conda/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so...
