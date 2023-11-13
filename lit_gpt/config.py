@@ -442,6 +442,7 @@ tiny_LLaMA = [
         intermediate_size=8640,
         n_query_groups=4,
         time_mixer="attention",
+        parameterization=None,
     ),
     dict(
         org="StatNLP-research",

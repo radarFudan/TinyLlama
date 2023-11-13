@@ -1,0 +1,162 @@
+
+===================================BUG REPORT===================================
+Welcome to bitsandbytes. For bug reports, please run
+
+python -m bitsandbytes
+
+ and submit this information together with your error trace to: https://github.com/TimDettmers/bitsandbytes/issues
+================================================================================
+bin /opt/conda/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so
+CUDA SETUP: CUDA runtime path found: /usr/local/cuda/lib64/libcudart.so
+CUDA SETUP: Highest compute capability among GPUs detected: 8.0
+CUDA SETUP: Detected CUDA version 118
+CUDA SETUP: Loading binary /opt/conda/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so...
+{'model_name': 'tiny_LLaMA_3b', 'name': 'tinyllama_3b', 'num_of_devices': 1, 'global_batch_size': 512, 'learning_rate': 0.01, 'micro_batch_size': 4, 'max_step': 10000, 'warmup_steps': 10, 'log_step_interval': 10, 'eval_iters': 100, 'save_step_interval': 2000, 'eval_step_interval': 2000, 'weight_decay': 0.1, 'beta1': 0.9, 'beta2': 0.95, 'grad_clip': 1.0, 'decay_lr': True, 'min_lr': 4e-05, 'batch_size': 512, 'gradient_accumulation_steps': 128, 'warmup_iters': 1280, 'max_iters': 1280000, 'lr_decay_iters': 1280000, 'log_iter_interval': 1280}
+Loading model with {'org': 'StatNLP-research', 'name': 'tiny_LLaMA_3b', 'block_size': 2048, 'vocab_size': 32000, 'padding_multiple': 64, 'padded_vocab_size': 32000, 'n_layer': 26, 'n_head': 32, 'n_embd': 3200, 'n_ssm': 4096, 'order': 1, 'rotary_percentage': 1.0, 'parallel_residual': False, 'bias': False, 'n_query_groups': 4, 'shared_attention_norm': False, '_norm_class': 'FusedRMSNorm', 'norm_eps': 1e-05, '_mlp_class': 'LLaMAMLP', 'intermediate_size': 8640, 'condense_ratio': 1, 'time_mixer': 'attention', 'parameterization': None}
+Time to instantiate model: 0.25 seconds.
+Total parameters 2,960,553,600
+Validating ...
+Estimated TFLOPs: 173.43
+iter 1 step 0: loss 10.6245, iter time: 829.08ms remaining time: 304.04 hours.  or 12.67 days. 
+iter 2 step 0: loss 10.5381, iter time: 828.07ms remaining time: 301.49 hours.  or 12.56 days. 
+iter 3 step 0: loss 10.5414, iter time: 830.58ms remaining time: 300.81 hours.  or 12.53 days. 
+iter 4 step 0: loss 10.6270, iter time: 824.05ms remaining time: 299.69 hours.  or 12.49 days. 
+iter 5 step 0: loss 10.5593, iter time: 832.29ms remaining time: 299.67 hours.  or 12.49 days. 
+iter 6 step 0: loss 10.5553, iter time: 823.67ms remaining time: 299.17 hours.  or 12.47 days. 
+iter 7 step 0: loss 10.5664, iter time: 829.99ms remaining time: 299.22 hours.  or 12.47 days. 
+iter 8 step 0: loss 10.5437, iter time: 825.74ms remaining time: 298.94 hours.  or 12.46 days. 
+iter 9 step 0: loss 10.6000, iter time: 831.07ms remaining time: 298.92 hours.  or 12.46 days. 
+iter 10 step 0: loss 10.5348, iter time: 825.42ms remaining time: 298.73 hours.  or 12.45 days. 
+iter 11 step 0: loss 10.5392, iter time: 831.60ms remaining time: 298.69 hours.  or 12.45 days. 
+iter 12 step 0: loss 10.5368, iter time: 828.45ms remaining time: 298.68 hours.  or 12.45 days. 
+iter 13 step 0: loss 10.5602, iter time: 826.58ms remaining time: 298.60 hours.  or 12.44 days. 
+iter 14 step 0: loss 10.6128, iter time: 831.87ms remaining time: 298.63 hours.  or 12.44 days. 
+iter 15 step 0: loss 10.5443, iter time: 824.99ms remaining time: 298.52 hours.  or 12.44 days. 
+iter 16 step 0: loss 10.5767, iter time: 830.87ms remaining time: 298.52 hours.  or 12.44 days. 
+iter 17 step 0: loss 10.5615, iter time: 829.84ms remaining time: 298.47 hours.  or 12.44 days. 
+iter 18 step 0: loss 10.5588, iter time: 825.98ms remaining time: 298.40 hours.  or 12.43 days. 
+iter 19 step 0: loss 10.5682, iter time: 835.02ms remaining time: 298.45 hours.  or 12.44 days. 
+iter 20 step 0: loss 10.5653, iter time: 826.61ms remaining time: 298.40 hours.  or 12.43 days. 
+iter 21 step 0: loss 10.5141, iter time: 830.67ms remaining time: 298.38 hours.  or 12.43 days. 
+iter 22 step 0: loss 10.5170, iter time: 830.91ms remaining time: 298.37 hours.  or 12.43 days. 
+iter 23 step 0: loss 10.5065, iter time: 826.19ms remaining time: 298.30 hours.  or 12.43 days. 
+iter 24 step 0: loss 10.5425, iter time: 832.34ms remaining time: 298.32 hours.  or 12.43 days. 
+iter 25 step 0: loss 10.5620, iter time: 825.45ms remaining time: 298.28 hours.  or 12.43 days. 
+iter 26 step 0: loss 10.5211, iter time: 831.75ms remaining time: 298.27 hours.  or 12.43 days. 
+iter 27 step 0: loss 10.5580, iter time: 826.23ms remaining time: 298.21 hours.  or 12.43 days. 
+iter 28 step 0: loss 10.5086, iter time: 832.86ms remaining time: 298.20 hours.  or 12.43 days. 
+iter 29 step 0: loss 10.5644, iter time: 826.15ms remaining time: 298.13 hours.  or 12.42 days. 
+iter 30 step 0: loss 10.6130, iter time: 831.48ms remaining time: 298.15 hours.  or 12.42 days. 
+iter 31 step 0: loss 10.5457, iter time: 826.42ms remaining time: 298.08 hours.  or 12.42 days. 
+iter 32 step 0: loss 10.5868, iter time: 831.10ms remaining time: 298.08 hours.  or 12.42 days. 
+iter 33 step 0: loss 10.5368, iter time: 825.78ms remaining time: 298.02 hours.  or 12.42 days. 
+iter 34 step 0: loss 10.6063, iter time: 832.33ms remaining time: 298.00 hours.  or 12.42 days. 
+iter 35 step 0: loss 10.5417, iter time: 828.56ms remaining time: 297.96 hours.  or 12.41 days. 
+iter 36 step 0: loss 10.5124, iter time: 829.98ms remaining time: 297.94 hours.  or 12.41 days. 
+iter 37 step 0: loss 10.5592, iter time: 827.13ms remaining time: 297.92 hours.  or 12.41 days. 
+iter 38 step 0: loss 10.5582, iter time: 833.76ms remaining time: 297.96 hours.  or 12.42 days. 
+iter 39 step 0: loss 10.5921, iter time: 825.09ms remaining time: 297.91 hours.  or 12.41 days. 
+iter 40 step 0: loss 10.5636, iter time: 832.68ms remaining time: 297.94 hours.  or 12.41 days. 
+iter 41 step 0: loss 10.5261, iter time: 826.22ms remaining time: 297.87 hours.  or 12.41 days. 
+iter 42 step 0: loss 10.5454, iter time: 833.18ms remaining time: 297.88 hours.  or 12.41 days. 
+iter 43 step 0: loss 10.5225, iter time: 825.85ms remaining time: 297.85 hours.  or 12.41 days. 
+iter 44 step 0: loss 10.5884, iter time: 833.95ms remaining time: 297.86 hours.  or 12.41 days. 
+iter 45 step 0: loss 10.5168, iter time: 826.25ms remaining time: 297.82 hours.  or 12.41 days. 
+iter 46 step 0: loss 10.5584, iter time: 833.37ms remaining time: 297.85 hours.  or 12.41 days. 
+iter 47 step 0: loss 10.5997, iter time: 826.30ms remaining time: 297.83 hours.  or 12.41 days. 
+iter 48 step 0: loss 10.5118, iter time: 833.13ms remaining time: 297.84 hours.  or 12.41 days. 
+iter 49 step 0: loss 10.5625, iter time: 826.94ms remaining time: 297.80 hours.  or 12.41 days. 
+iter 50 step 0: loss 10.5935, iter time: 832.52ms remaining time: 297.81 hours.  or 12.41 days. 
+iter 51 step 0: loss 10.5592, iter time: 827.16ms remaining time: 297.77 hours.  or 12.41 days. 
+iter 52 step 0: loss 10.5737, iter time: 834.49ms remaining time: 297.78 hours.  or 12.41 days. 
+iter 53 step 0: loss 10.5480, iter time: 824.95ms remaining time: 297.75 hours.  or 12.41 days. 
+iter 54 step 0: loss 10.5749, iter time: 835.67ms remaining time: 297.78 hours.  or 12.41 days. 
+iter 55 step 0: loss 10.5926, iter time: 827.51ms remaining time: 297.74 hours.  or 12.41 days. 
+iter 56 step 0: loss 10.5875, iter time: 836.14ms remaining time: 297.78 hours.  or 12.41 days. 
+iter 57 step 0: loss 10.5538, iter time: 829.43ms remaining time: 297.77 hours.  or 12.41 days. 
+iter 58 step 0: loss 10.5587, iter time: 833.72ms remaining time: 297.78 hours.  or 12.41 days. 
+iter 59 step 0: loss 10.4498, iter time: 828.43ms remaining time: 297.74 hours.  or 12.41 days. 
+iter 60 step 0: loss 10.5116, iter time: 833.76ms remaining time: 297.75 hours.  or 12.41 days. 
+iter 61 step 0: loss 10.5923, iter time: 825.79ms remaining time: 297.73 hours.  or 12.41 days. 
+iter 62 step 0: loss 10.5186, iter time: 836.98ms remaining time: 297.75 hours.  or 12.41 days. 
+iter 63 step 0: loss 10.5490, iter time: 829.16ms remaining time: 297.73 hours.  or 12.41 days. 
+iter 64 step 0: loss 10.5843, iter time: 835.19ms remaining time: 297.74 hours.  or 12.41 days. 
+iter 65 step 0: loss 10.5599, iter time: 832.30ms remaining time: 297.75 hours.  or 12.41 days. 
+iter 66 step 0: loss 10.5613, iter time: 834.64ms remaining time: 297.74 hours.  or 12.41 days. 
+iter 67 step 0: loss 10.5830, iter time: 829.84ms remaining time: 297.72 hours.  or 12.40 days. 
+iter 68 step 0: loss 10.5901, iter time: 834.54ms remaining time: 297.73 hours.  or 12.41 days. 
+iter 69 step 0: loss 10.5064, iter time: 831.61ms remaining time: 297.73 hours.  or 12.41 days. 
+iter 70 step 0: loss 10.5757, iter time: 827.57ms remaining time: 297.73 hours.  or 12.41 days. 
+iter 71 step 0: loss 10.5451, iter time: 835.59ms remaining time: 297.75 hours.  or 12.41 days. 
+iter 72 step 0: loss 10.5887, iter time: 828.39ms remaining time: 297.73 hours.  or 12.41 days. 
+iter 73 step 0: loss 10.5339, iter time: 836.12ms remaining time: 297.74 hours.  or 12.41 days. 
+iter 74 step 0: loss 10.5410, iter time: 828.21ms remaining time: 297.72 hours.  or 12.40 days. 
+iter 75 step 0: loss 10.6427, iter time: 833.47ms remaining time: 297.73 hours.  or 12.41 days. 
+iter 76 step 0: loss 10.5368, iter time: 831.90ms remaining time: 297.74 hours.  or 12.41 days. 
+iter 77 step 0: loss 10.5350, iter time: 832.20ms remaining time: 297.74 hours.  or 12.41 days. 
+iter 78 step 0: loss 10.5630, iter time: 832.95ms remaining time: 297.73 hours.  or 12.41 days. 
+iter 79 step 0: loss 10.5362, iter time: 831.74ms remaining time: 297.73 hours.  or 12.41 days. 
+iter 80 step 0: loss 10.5560, iter time: 828.53ms remaining time: 297.69 hours.  or 12.40 days. 
+iter 81 step 0: loss 10.5884, iter time: 837.10ms remaining time: 297.70 hours.  or 12.40 days. 
+iter 82 step 0: loss 10.5464, iter time: 831.29ms remaining time: 297.68 hours.  or 12.40 days. 
+iter 83 step 0: loss 10.5712, iter time: 833.14ms remaining time: 297.68 hours.  or 12.40 days. 
+iter 84 step 0: loss 10.5498, iter time: 833.98ms remaining time: 297.68 hours.  or 12.40 days. 
+iter 85 step 0: loss 10.5509, iter time: 829.29ms remaining time: 297.67 hours.  or 12.40 days. 
+iter 86 step 0: loss 10.5228, iter time: 836.07ms remaining time: 297.68 hours.  or 12.40 days. 
+iter 87 step 0: loss 10.5804, iter time: 827.44ms remaining time: 297.66 hours.  or 12.40 days. 
+iter 88 step 0: loss 10.5959, iter time: 829.94ms remaining time: 297.64 hours.  or 12.40 days. 
+iter 89 step 0: loss 10.5517, iter time: 837.28ms remaining time: 297.66 hours.  or 12.40 days. 
+iter 90 step 0: loss 10.5661, iter time: 828.88ms remaining time: 297.64 hours.  or 12.40 days. 
+iter 91 step 0: loss 10.5481, iter time: 834.84ms remaining time: 297.65 hours.  or 12.40 days. 
+iter 92 step 0: loss 10.5242, iter time: 829.73ms remaining time: 297.64 hours.  or 12.40 days. 
+iter 93 step 0: loss 10.5408, iter time: 834.30ms remaining time: 297.65 hours.  or 12.40 days. 
+iter 94 step 0: loss 10.5719, iter time: 829.40ms remaining time: 297.64 hours.  or 12.40 days. 
+iter 95 step 0: loss 10.5201, iter time: 836.21ms remaining time: 297.64 hours.  or 12.40 days. 
+iter 96 step 0: loss 10.5640, iter time: 828.66ms remaining time: 297.63 hours.  or 12.40 days. 
+iter 97 step 0: loss 10.5028, iter time: 834.23ms remaining time: 297.64 hours.  or 12.40 days. 
+iter 98 step 0: loss 10.5674, iter time: 830.57ms remaining time: 297.63 hours.  or 12.40 days. 
+iter 99 step 0: loss 10.5418, iter time: 834.60ms remaining time: 297.63 hours.  or 12.40 days. 
+iter 100 step 0: loss 10.5738, iter time: 828.63ms remaining time: 297.62 hours.  or 12.40 days. 
+iter 101 step 0: loss 10.5847, iter time: 837.12ms remaining time: 297.63 hours.  or 12.40 days. 
+iter 102 step 0: loss 10.5195, iter time: 829.40ms remaining time: 297.62 hours.  or 12.40 days. 
+iter 103 step 0: loss 10.5166, iter time: 835.31ms remaining time: 297.62 hours.  or 12.40 days. 
+iter 104 step 0: loss 10.5645, iter time: 827.71ms remaining time: 297.61 hours.  or 12.40 days. 
+iter 105 step 0: loss 10.5033, iter time: 836.45ms remaining time: 297.62 hours.  or 12.40 days. 
+iter 106 step 0: loss 10.5327, iter time: 830.27ms remaining time: 297.62 hours.  or 12.40 days. 
+iter 107 step 0: loss 10.5462, iter time: 834.26ms remaining time: 297.62 hours.  or 12.40 days. 
+iter 108 step 0: loss 10.5472, iter time: 832.58ms remaining time: 297.62 hours.  or 12.40 days. 
+iter 109 step 0: loss 10.5310, iter time: 832.74ms remaining time: 297.62 hours.  or 12.40 days. 
+iter 110 step 0: loss 10.5667, iter time: 830.71ms remaining time: 297.60 hours.  or 12.40 days. 
+iter 111 step 0: loss 10.5913, iter time: 834.96ms remaining time: 297.61 hours.  or 12.40 days. 
+iter 112 step 0: loss 10.6069, iter time: 831.34ms remaining time: 297.60 hours.  or 12.40 days. 
+iter 113 step 0: loss 10.5710, iter time: 836.26ms remaining time: 297.61 hours.  or 12.40 days. 
+iter 114 step 0: loss 10.5401, iter time: 831.05ms remaining time: 297.60 hours.  or 12.40 days. 
+iter 115 step 0: loss 10.5299, iter time: 836.20ms remaining time: 297.60 hours.  or 12.40 days. 
+iter 116 step 0: loss 10.5356, iter time: 831.32ms remaining time: 297.59 hours.  or 12.40 days. 
+iter 117 step 0: loss 10.5560, iter time: 835.12ms remaining time: 297.58 hours.  or 12.40 days. 
+iter 118 step 0: loss 10.5755, iter time: 832.03ms remaining time: 297.58 hours.  or 12.40 days. 
+iter 119 step 0: loss 10.5955, iter time: 836.10ms remaining time: 297.58 hours.  or 12.40 days. 
+iter 120 step 0: loss 10.5511, iter time: 829.91ms remaining time: 297.57 hours.  or 12.40 days. 
+iter 121 step 0: loss 10.5831, iter time: 835.40ms remaining time: 297.57 hours.  or 12.40 days. 
+iter 122 step 0: loss 10.5197, iter time: 833.54ms remaining time: 297.56 hours.  or 12.40 days. 
+iter 123 step 0: loss 10.5255, iter time: 837.75ms remaining time: 297.58 hours.  or 12.40 days. 
+iter 124 step 0: loss 10.6195, iter time: 828.66ms remaining time: 297.56 hours.  or 12.40 days. 
+iter 125 step 0: loss 10.5358, iter time: 836.62ms remaining time: 297.58 hours.  or 12.40 days. 
+iter 126 step 0: loss 10.5611, iter time: 831.01ms remaining time: 297.57 hours.  or 12.40 days. 
+iter 127 step 0: loss 10.5800, iter time: 834.93ms remaining time: 297.58 hours.  or 12.40 days. 
+Gradient norm:  tensor(7.9512, device='cuda:0')
+iter 128 step 1: loss 10.5382, iter time: 984.14ms (optimizer.step) remaining time: 297.99 hours.  or 12.42 days. 
+iter 129 step 1: loss 11.7109, iter time: 809.01ms remaining time: 298.18 hours.  or 12.42 days. 
+
+===================================BUG REPORT===================================
+Welcome to bitsandbytes. For bug reports, please run
+
+python -m bitsandbytes
+
+ and submit this information together with your error trace to: https://github.com/TimDettmers/bitsandbytes/issues
+================================================================================
+bin /opt/conda/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so
+CUDA SETUP: CUDA runtime path found: /usr/local/cuda/lib64/libcudart.so.11.0
+CUDA SETUP: Highest compute capability among GPUs detected: 8.0
+CUDA SETUP: Detected CUDA version 118
+CUDA SETUP: Loading binary /opt/conda/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so...

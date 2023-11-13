@@ -87,7 +87,7 @@ wandb_logger = WandbLogger(name="tiny_llama_120M_SSM_O2_best", id="tiny_llama_12
 
 def setup(
     # devices: int = 8,
-    devices: int = 1,
+    devices: int = num_of_devices,
     train_data_dir: Path = Path("data/redpajama_sample"),
     val_data_dir: Optional[Path] = None,
     precision: Optional[str] = None,
