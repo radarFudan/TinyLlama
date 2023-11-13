@@ -73,7 +73,16 @@ val_data_config = [
 
 hparams = {k: v for k, v in locals().items() if isinstance(v, (int, float, str)) and not k.startswith("_")}
 logger = step_csv_logger("out", name, flush_logs_every_n_steps=log_iter_interval)
-wandb_logger = WandbLogger(name="tiny_llama_120M_SSM_O2_best", id="tiny_llama_120M_SSM_O2_best", project="Rebuttal", offline=True)
+
+import os
+import wandb
+def read_key_from_file(file_path):
+    with open(file_path, 'r') as file:
+        return file.read().strip()
+key_file_path = '/home/aiops/wangsd/TinyLlama_3/wandb_key.txt'
+wandb_key = read_key_from_file(key_file_path)
+wandb.login(key=wandb_key)
+wandb_logger = WandbLogger(name="tiny_llama_120M_SSM_O2_best", id="tiny_llama_120M_SSM_O2_best", project="Rebuttal")
 
 
 def setup(
@@ -123,24 +132,26 @@ def main(fabric, train_data_dir, val_data_dir, resume):
         fabric=fabric,
         train_data_dir=train_data_dir,
         val_data_dir=val_data_dir,
-        seed=3407,
+        seed=3410,
     )
     if val_dataloader is None:
         train_dataloader = fabric.setup_dataloaders(train_dataloader)
     else:
         train_dataloader, val_dataloader = fabric.setup_dataloaders(train_dataloader, val_dataloader)
 
-    fabric.seed_everything(3407)  # same seed for every process to init model (FSDP)
+    fabric.seed_everything(3410)  # same seed for every process to init model (FSDP)
 
     fabric.print(f"Loading model with {config.__dict__}")
     t0 = time.perf_counter()
     with fabric.init_module(empty_init=(fabric.world_size > 1)):
         model = GPT(config)
         model.apply(partial(model._init_weights ,n_layer=config.n_layer))
- 
+
 
     fabric.print(f"Time to instantiate model: {time.perf_counter() - t0:.02f} seconds.")
     fabric.print(f"Total parameters {num_parameters(model):,}")
+
+    wandb_logger.watch(model, log="all", log_freq=1000)
 
     model = fabric.setup(model)
     optimizer = torch.optim.AdamW(
@@ -169,7 +180,10 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
     optimizer = state["optimizer"]
 
     if val_dataloader is not None:
-        validate(fabric, model, val_dataloader)  # sanity check
+        t0 = time.perf_counter()
+        val_loss = validate(fabric, model, val_dataloader)  # sanity check
+        t1 = time.perf_counter() - t0
+        fabric.print(f"Sanity check, val loss {val_loss:.4f}, val time: {t1 * 1000:.2f}ms")
 
     with torch.device("meta"):
         meta_model = GPT(model.config)
