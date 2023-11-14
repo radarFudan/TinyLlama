@@ -462,6 +462,7 @@ tiny_LLaMA = [
         intermediate_size=5632,
         n_query_groups=4,
         time_mixer="attention",
+        parameterization=None,
     ),
     dict(
         org="StatNLP-research",
@@ -481,6 +482,7 @@ tiny_LLaMA = [
         intermediate_size=2048,
         n_query_groups=1,
         time_mixer="attention",
+        parameterization=None,
     ),
     dict(
         org="StatNLP-research",
