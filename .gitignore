@@ -17,3 +17,5 @@ sft/output
 sft/wandb
 
 wandb_key.txt
+*.txt
+**/*.txt

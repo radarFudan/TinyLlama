@@ -20,6 +20,9 @@ FlashAttention2Available = RequirementCache("flash-attn>=2.0.0.post1")
 
 from lit_gpt.associative_scan import associative_scan, nested_func
 
+from lit_gpt.retnet import RetNetDecoder
+from lit_gpt.retnet_config import RetNetConfig
+
 import einops
 
 class GPT(nn.Module):
@@ -163,6 +166,11 @@ class Block(nn.Module):
         elif config.time_mixer == "ssm":
             # print("Using SSM mixer")
             self.attn = SSM_Hyena(config)
+        elif config.time_mixer == "retnet":
+            retnet_config = RetNetConfig()
+            args = {"dropout": config.retnet_dropout}
+            retnet_config.override(args) # Can you a config file to overwrite the previous config. 
+            self.attn = RetNetDecoder(retnet_config)
         else:
             raise NotImplementedError(f"Time mixer {config.time_mixer} not implemented")
 
@@ -351,6 +359,7 @@ class SSM_Hyena(nn.Module):
         input_pos: Optional[torch.Tensor] = None,
         kv_cache: Optional[KVCache] = None,
     ) -> Tuple[torch.Tensor, Optional[KVCache]]:
+        
         B, T, _ = x.size()  # batch size, sequence length, embedding dimensionality (n_embd)
         x = self.in_proj(x) # batch size, sequence length, order * n_ssm. 
         x = einops.rearrange(x, "b t (o c) -> o b t c", o = self.order, c = self.n_ssm) # order, batch size, sequence length, n_ssm
@@ -376,9 +385,7 @@ class SSM_Hyena(nn.Module):
         for i in range(1, self.order):
             y = y * x[i, :, :, :] # Then it seems it would be difficult to approximate order one term? 
 
-            # Current associative scan does not have bias term.
             # TODO, currently bias term is shared across different orders
-            # _, y = associative_scan(nested_func, (Lambda_elements[i,:,:,:], y), axis=1) # B * T * C
             y = associative_scan(nested_func, (Lambda_elements[i,:,:,:], y), axis=1)[1] + self.D(y) # B * T * C
 
             # TODO, Lambda_elements[0,:,:,:] is not used. 
@@ -392,6 +399,7 @@ class SSM_Hyena(nn.Module):
         return y, kv_cache
     
     def reset_parameters(self) -> None:
+        print("reset_parameters called in SSM_Hyena, consider implement it and check the usage")
         pass
 
     def register(self, name, tensor, lr=None):
