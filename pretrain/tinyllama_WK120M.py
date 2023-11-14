@@ -25,34 +25,29 @@ import random
 
 from dataloading import create_wikitext_dataset
 
-# model_name = "tiny_LLaMA_1b"
-# name = "tinyllama_1b"
 model_name = "tiny_LLaMA_120M"
 name = "tinyllama_120m"
 out_dir = Path("out") / name
 
 # Hyperparameters
-# num_of_devices = 8
 num_of_devices = 1
 global_batch_size = 16
-# learning_rate = 4e-4
 learning_rate = 1e-3
 micro_batch_size = 16
-# max_step = 715256 * 2
 max_step = 115000
 warmup_steps = 1000
-log_step_interval = 50
+log_step_interval = 100
 eval_iters = 100
 save_step_interval = 5000
 eval_step_interval = 5000
 
 
-weight_decay = 1e-1
+weight_decay = 0.25
 beta1 = 0.9
-beta2 = 0.95
-grad_clip = 1.0
+beta2 = 0.95 # 0.999 for wikitext
+grad_clip = 1.0 # It seems S5 does not apply this, safari use 1.0
 decay_lr = True
-min_lr = 4e-5
+min_lr = 4e-5 # Not sure how to tune
 
 batch_size = global_batch_size // num_of_devices
 gradient_accumulation_steps = batch_size // micro_batch_size
@@ -68,10 +63,6 @@ log_iter_interval = log_step_interval * gradient_accumulation_steps
 
 
 # Treat all dataset equally by their size. If you want to use a different weight for a dataset, add it to the list with the weight.
-# train_data_config = [
-#     ("train_slim", 0.693584),
-#     ("train_star", 0.306416),
-# ]
 train_data_config = [
     ("train_ind", 1.0),
 ]
@@ -82,7 +73,16 @@ val_data_config = [
 
 hparams = {k: v for k, v in locals().items() if isinstance(v, (int, float, str)) and not k.startswith("_")}
 logger = step_csv_logger("out", name, flush_logs_every_n_steps=log_iter_interval)
-wandb_logger = WandbLogger(name="tiny_llama_120M_wikitext_baseline", id="debug_id", project="TL1", offline=True)
+
+import os
+import wandb
+def read_key_from_file(file_path):
+    with open(file_path, 'r') as file:
+        return file.read().strip()
+key_file_path = '/home/aiops/wangsd/TinyLlama_3/wandb_key.txt'
+wandb_key = read_key_from_file(key_file_path)
+wandb.login(key=wandb_key)
+wandb_logger = WandbLogger(name="tiny_llama_120M_SSM_O2_direct", id="tiny_llama_120M_SSM_O2_direct", project="TL1")
 
 
 def setup(
@@ -154,6 +154,8 @@ def main(fabric, train_data_dir, val_data_dir, resume, use_wikitext):
     fabric.print(f"Time to instantiate model: {time.perf_counter() - t0:.02f} seconds.")
     fabric.print(f"Total parameters {num_parameters(model):,}")
 
+    wandb_logger.watch(model, log="all", log_freq=1000)
+
     model = fabric.setup(model)
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=learning_rate, weight_decay=weight_decay, betas=(beta1, beta2), foreach=False
@@ -181,7 +183,10 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
     optimizer = state["optimizer"]
 
     if val_dataloader is not None:
-        validate(fabric, model, val_dataloader)  # sanity check
+        t0 = time.perf_counter()
+        val_loss = validate(fabric, model, val_dataloader)  # sanity check
+        t1 = time.perf_counter() - t0
+        fabric.print(f"Sanity check, val loss {val_loss:.4f}, val time: {t1 * 1000:.2f}ms")
 
     with torch.device("meta"):
         meta_model = GPT(model.config)

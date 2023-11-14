@@ -1,4 +1,4 @@
-lightning run model \
+CUDA_VISIBLE_DEVICES=0 lightning run model \
     --node-rank=0  \
     --accelerator=cuda \
     --devices=1 \
