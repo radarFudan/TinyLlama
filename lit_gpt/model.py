@@ -18,6 +18,9 @@ RoPECache = Tuple[torch.Tensor, torch.Tensor]
 KVCache = Tuple[torch.Tensor, torch.Tensor]
 FlashAttention2Available = RequirementCache("flash-attn>=2.0.0.post1")
 
+from lit_gpt.associative_scan import associative_scan, nested_func
+
+import einops
 
 class GPT(nn.Module):
     def __init__(self, config: Config) -> None:
@@ -154,8 +157,15 @@ class Block(nn.Module):
         super().__init__()
         self.norm_1 = config.norm_class(config.n_embd, eps=config.norm_eps)
 
-        self.attn = CausalSelfAttention(config)
-        
+        if config.time_mixer == "attention":
+            # print("Using attention mixer")
+            self.attn = CausalSelfAttention(config)
+        elif config.time_mixer == "ssm":
+            # print("Using SSM mixer")
+            self.attn = CausalSSM(config)
+        else:
+            raise NotImplementedError(f"Time mixer {config.time_mixer} not implemented")
+
         if not config.shared_attention_norm:
             self.norm_2 = config.norm_class(config.n_embd, eps=config.norm_eps)
         self.mlp = config.mlp_class(config)
@@ -296,13 +306,39 @@ class CausalSelfAttention(nn.Module):
 
 
 class CausalSSM(nn.Module):
+    """
+    SSM is recurrent by construction, therefore it's causal. 
+    """
     def __init__(self, config: Config) -> None:
         super().__init__()
-        shape = (config.n_head + 2 * config.n_query_groups) * config.head_size
-        # key, query, value projections for all heads, but in a batch
-        self.attn = nn.Linear(config.n_embd, shape, bias=config.bias)
-        # output projection
-        self.proj = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
+
+        # self.lambdas = nn.Parameter(torch.rand(config.order, 1, 1, config.n_ssm))
+
+        self.parameterization = "exp"
+        lambdas_weights = torch.rand(config.order, 1, 1, config.n_ssm)
+        if self.parameterization == "exp":
+            lambdas = torch.log(lambdas_weights)
+        elif self.parameterization == "direct":
+            lambdas = lambdas_weights
+        elif self.parameterization == "softplus":
+            lambdas = torch.log(torch.exp(lambdas_weights) - 1.0)
+        elif self.parameterization == "best":
+            lambdas = torch.sqrt(torch.maximum(1 / lambdas_weights - 1.0, 1e-6 * torch.ones_like(lambdas_weights)))
+        else:
+            return ValueError(f"Unknown parameterization {self.parameterization}")
+        self.register("lambdas", lambdas, 0.001)
+
+        # input/output projection
+        self.in_proj = nn.Linear(config.n_embd, config.n_ssm * config.order, bias=config.bias)
+        self.out_proj = nn.Linear(config.n_ssm, config.n_embd, bias=config.bias)
+
+        self.D = nn.Linear(config.n_ssm, config.n_ssm, bias=config.bias)
+
+        self.order = config.order
+        self.n_ssm = config.n_ssm
+
+        self.filter_activation = nn.GELU()
+        self.activation = nn.Identity()
 
         self.config = config
 
@@ -315,14 +351,56 @@ class CausalSSM(nn.Module):
         input_pos: Optional[torch.Tensor] = None,
         kv_cache: Optional[KVCache] = None,
     ) -> Tuple[torch.Tensor, Optional[KVCache]]:
-        B, T, C = x.size()  # batch size, sequence length, embedding dimensionality (n_embd)
+        
+        B, T, _ = x.size()  # batch size, sequence length, embedding dimensionality (n_embd)
+        x = self.in_proj(x) # batch size, sequence length, order * n_ssm. 
+        x = einops.rearrange(x, "b t (o c) -> o b t c", o = self.order, c = self.n_ssm) # order, batch size, sequence length, n_ssm
+        O, _, _, C = x.size()  # order * batch size, sequence length, n_ssm
 
-        y = x.reshape(B, T, C)
+        # Different parameterization is reflected here.
+        if self.parameterization == "exp":
+            lambdas = -torch.exp(self.lambdas)
+        elif self.parameterization == "direct":
+            lambdas = self.lambdas
+        elif self.parameterization == "softplus":
+            lambdas = -torch.log(1 + torch.exp(self.lambdas))
+        elif self.parameterization == "best":
+            lambdas = -1 / (self.lambdas**2 + 1.0)
+        else:
+            return ValueError(f"Unknown parameterization {self.parameterization}")
+        
+        Lambda_elements = lambdas * torch.ones(1, 1, T, 1).to(self.lambdas.device) # O * B * T * C
+
+        y = x[0,:,:,:] # B * T * C
+        
+        assert self.order >= 1
+        for i in range(1, self.order):
+            y = y * x[i, :, :, :] # Then it seems it would be difficult to approximate order one term? 
+
+            # TODO, currently bias term is shared across different orders
+            y = associative_scan(nested_func, (Lambda_elements[i,:,:,:], y), axis=1)[1] + self.D(y) # B * T * C
+
+            # TODO, Lambda_elements[0,:,:,:] is not used. 
+
+            y = self.filter_activation(y)
 
         # output projection
-        y = self.proj(y)
+        y = self.activation(y) # It's identity. 
+        y = self.out_proj(y)
 
         return y, kv_cache
+    
+    def register(self, name, tensor, lr=None):
+        """Register a tensor with a configurable learning rate and 0 weight decay"""
+
+        if lr == 0.0:
+            self.register_buffer(name, tensor)
+        else:
+            self.register_parameter(name, nn.Parameter(tensor))
+
+            optim = {"weight_decay": 0.0}
+            if lr is not None: optim["lr"] = lr
+            setattr(getattr(self, name), "_optim", optim)
 
 
 class GptNeoxMLP(nn.Module):

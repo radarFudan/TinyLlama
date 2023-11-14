@@ -25,8 +25,8 @@ import random
 
 from dataloading import create_wikitext_dataset
 
-model_name = "tiny_LLaMA_120M"
-name = "tinyllama_120m"
+model_name = "tiny_LLaMA_120M_SSM_O2"
+name = "tinyllama_120m_ssm_o2"
 out_dir = Path("out") / name
 
 # Hyperparameters
@@ -44,7 +44,7 @@ eval_step_interval = 5000
 
 weight_decay = 0.25
 beta1 = 0.9
-beta2 = 0.95 # 0.999 for wikitext
+beta2 = 0.999 # 0.999 for wikitext
 grad_clip = 1.0 # It seems S5 does not apply this, safari use 1.0
 decay_lr = True
 min_lr = 4e-5 # Not sure how to tune
@@ -82,7 +82,7 @@ def read_key_from_file(file_path):
 key_file_path = '/home/aiops/wangsd/TinyLlama_3/wandb_key.txt'
 wandb_key = read_key_from_file(key_file_path)
 wandb.login(key=wandb_key)
-wandb_logger = WandbLogger(name="tiny_llama_120M_SSM_O2_direct", id="tiny_llama_120M_SSM_O2_direct", project="TL1")
+wandb_logger = WandbLogger(name="tiny_llama_120M_SSM_O2_direct_v2", id="tiny_llama_120M_SSM_O2_direct_v2", project="TL1")
 
 
 def setup(

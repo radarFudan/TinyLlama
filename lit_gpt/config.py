@@ -19,6 +19,8 @@ class Config:
     n_layer: int = 16
     n_head: int = 32
     n_embd: int = 4096
+    n_ssm: int = 4096
+    order: int = 1
     rotary_percentage: float = 0.25
     parallel_residual: bool = True
     bias: bool = True
@@ -49,6 +51,7 @@ class Config:
     _mlp_class: Literal["GptNeoxMLP", "LLaMAMLP"] = "GptNeoxMLP"
     intermediate_size: Optional[int] = None
     condense_ratio: int = 1
+    time_mixer: str = None,
 
     def __post_init__(self):
         # error checking
@@ -266,14 +269,36 @@ tiny_LLaMA = [
     ),
     dict(
         org="StatNLP-research",
-        name="tiny_LLaMA_120M",
+        name="tiny_LLaMA_120M_SSM_O2",
+        block_size=1024,
+        vocab_size=50257,
+        padding_multiple=1,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        n_ssm=128,
+        order=2,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=True,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=3072,
+        n_query_groups=1,
+        time_mixer="ssm",
+    ),
+    dict(
+        org="StatNLP-research",
+        name="tiny_LLaMA_120M_Baseline",
         block_size=2048,
-        # vocab_size=32000,
         vocab_size=50257,
         padding_multiple=64,
         n_layer=12,
         n_head=12,
         n_embd=768,
+        n_ssm=None,
+        order=None,
         rotary_percentage=1.0,
         parallel_residual=False,
         bias=False,
@@ -282,6 +307,7 @@ tiny_LLaMA = [
         _mlp_class="LLaMAMLP",
         intermediate_size=2048,
         n_query_groups=1,
+        time_mixer="attention",
     ),
     dict(
         org="StatNLP-research",
