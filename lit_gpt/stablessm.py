@@ -128,6 +128,7 @@ class STABLESSM(nn.Module):
         self.D = nn.Parameter(torch.randn(self.h))
 
         # SSM Kernel
+        print("kernel_args", kernel_args)
         self.kernel = STABLESSMKernel(self.h, N=self.n, **kernel_args)
 
         # Pointwise
@@ -173,17 +174,15 @@ class StableSSMModel(nn.Module):
     def __init__(
         self,
         rec1_size=256,
-        n_layers=4,
+        n_layers=1,
         dropout=0.2,
         dt=0.33,
         prenorm=False,
         parameterization="exp",  # this is a kernel_arg
-        return_seq:bool=False,
     ):
         super().__init__()
 
         self.prenorm = prenorm
-        self.return_seq = return_seq
 
         # Stack StableSSM layers as residual blocks
         self.stablessm_layers = nn.ModuleList()
@@ -228,11 +227,5 @@ class StableSSMModel(nn.Module):
                 x = norm(x.transpose(-1, -2)).transpose(-1, -2)
 
         x = x.transpose(-1, -2)  # (B, d_model, L) -> (B, L, d_model)
-
-        # Pooling: average pooling over the sequence length
-        if not self.return_seq:
-            x = x.mean(dim=-2)  # This is actually a linear convolution layer...
-        else:
-            x = x
 
         return x

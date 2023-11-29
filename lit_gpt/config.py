@@ -732,7 +732,8 @@ tiny_LLaMA = [
         block_size=2048,
         vocab_size=32000,
         padding_multiple=64,
-        n_layer=12,
+        # n_layer=12,
+        n_layer=2,
         n_head=12,
         n_embd=768,
         rotary_percentage=1.0,
@@ -744,7 +745,7 @@ tiny_LLaMA = [
         intermediate_size=2048,
         n_query_groups=1,
         time_mixer="attnssm",
-        parameterization=None,
+        parameterization="best",
     ),
 ]
 configs.extend(tiny_LLaMA)

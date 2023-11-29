@@ -323,19 +323,24 @@ class CausalSelfAttentionSSM(nn.Module):
         # key, query, value projections for all heads, but in a batch
         self.attn = nn.Linear(config.n_embd, shape, bias=config.bias)
         # output projection
-        self.proj = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
+        self.proj = nn.Linear(3 * config.n_embd, config.n_embd, bias=config.bias)
 
         self.config = config
 
+        print("n_head", config.n_head)
+        print("n_query_groups", config.n_query_groups)
+        print("head_size", config.head_size)
+        print("config.n_embd", config.n_embd)
+
         print("In AttentionSSM, the parameterization used is", config.parameterization)
+        print("In AttentionSSM, the hidden dimension used is", 3 * config.n_head * config.head_size)
         self.stableSSMModel = StableSSMModel(
-            rec1_size=config.n_embd,
+            rec1_size=3 * config.n_head * config.head_size,
             n_layers=1,
             dropout=0.2,
             dt=0.33,
             prenorm=False,
             parameterization=config.parameterization,  # this is a kernel_arg
-            return_seq=True,
             )
 
     def forward(
@@ -405,7 +410,7 @@ class CausalSelfAttentionSSM(nn.Module):
         y = y.reshape(B, T, C)  # re-assemble all head outputs side by side
 
         # output projection
-        y = self.proj(y)
+        y = self.proj(y) # # y (batch_size, seqlen, ) -> # y (batch_size, seqlen, nheads, headdim)
 
         return y, kv_cache
 
@@ -437,9 +442,14 @@ class CausalSelfAttentionSSM(nn.Module):
              v = v.repeat_interleave(q.shape[1]//v.shape[1], dim=1)
         
         qkv = torch.cat((q, k, v), dim=-1) # q, k, v (batch_size, nheads, seqlen, 3 * headdim)
-        y = self.stableSSMModel(qkv) # y (batch_size, nheads, seqlen, headdim)
+        # b, n, s, h = qkv.shape
+        _, n, _, _ = qkv.shape
+        qkv = einops.rearrange(qkv, "b n s h -> b s (n h)") # (batch_size, seqlen, 3 * nheads * headdim)
+        y = self.stableSSMModel(qkv) # y (batch_size, seqlen, 3 * nheads * headdim)
 
-        return y.transpose(1, 2)
+        y = einops.rearrange(y, "b s (n h) -> b n s h", n = n, h = 3 * self.config.head_size) # y (batch_size, nheads, seqlen, 3 * headdim)
+
+        return y.transpose(1, 2) # y (batch_size, seqlen, nheads, 3 * headdim)
 
 
 class SSM_Hyena(nn.Module):
