@@ -248,6 +248,7 @@ for c in falcon:
 # StatNLP Research
 #############################
 tiny_LLaMA = [
+    # 3B SSM
     dict( # exp
         org="StatNLP-research",
         name="tiny_LLaMA_3B_SSM_O2_exp", # 
@@ -336,6 +337,7 @@ tiny_LLaMA = [
         time_mixer="ssm",
         parameterization="direct",
     ),
+    # 120M SSM
     dict( # exp
         org="StatNLP-research",
         name="tiny_LLaMA_120M_SSM_O2_exp",  # 108,351,744
@@ -425,7 +427,7 @@ tiny_LLaMA = [
         parameterization="best",
     ),
     ## safari
-    dict( # exp
+    dict( # tiny_LLaMA_120M_SSM_O2_exp_safari
         org="StatNLP-research",
         name="tiny_LLaMA_120M_SSM_O2_exp_safari",  # Total parameters 165,911,808
         block_size=1024,
@@ -447,7 +449,30 @@ tiny_LLaMA = [
         time_mixer="ssm",
         parameterization="exp",
     ),
-    dict(
+    dict( # baseline, tiny_LLaMA_120M_safari
+        org="StatNLP-research",
+        name="tiny_LLaMA_120M_safari",  # 177,514,752
+        block_size=1024,
+        vocab_size=50257,
+        padding_multiple=8,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        n_ssm=128,
+        order=2,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=True,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=3072,
+        n_query_groups=1,
+        time_mixer="attention",
+        parameterization="exp",
+    ),
+    # RetNet
+    dict( # tiny_LLaMA_120M_RetNet
         org="StatNLP-research",
         name="tiny_LLaMA_120M_RetNet", 
         block_size=2048,
@@ -470,7 +495,7 @@ tiny_LLaMA = [
         parameterization=None,
         retnet_dropout=0.1,
     ),
-    dict(
+    dict( # tiny_LLaMA_120M_RetNet_Baseline
         org="StatNLP-research",
         name="tiny_LLaMA_120M_RetNet_Baseline", 
         block_size=2048,
@@ -493,30 +518,8 @@ tiny_LLaMA = [
         parameterization=None,
         retnet_dropout=0.1,
     ),
-    dict( # exp
-        org="StatNLP-research",
-        name="tiny_LLaMA_120M_safari",  # 177,514,752
-        block_size=1024,
-        vocab_size=50257,
-        padding_multiple=8,
-        n_layer=12,
-        n_head=12,
-        n_embd=768,
-        n_ssm=128,
-        order=2,
-        rotary_percentage=1.0,
-        parallel_residual=False,
-        bias=True,
-        _norm_class="FusedRMSNorm",
-        norm_eps=1e-5,
-        _mlp_class="LLaMAMLP",
-        intermediate_size=3072,
-        n_query_groups=1,
-        time_mixer="attention",
-        parameterization="exp",
-    ),
     # https://twitter.com/cwolferesearch/status/1691929174175264858
-    dict(
+    dict( # tiny_LLaMA_3b
         org="StatNLP-research",
         name="tiny_LLaMA_3b",
         block_size=2048,
@@ -536,7 +539,7 @@ tiny_LLaMA = [
         time_mixer="attention",
         parameterization=None,
     ),
-    dict(
+    dict( # tiny_LLaMA_1b
         org="StatNLP-research",
         name="tiny_LLaMA_1b",
         block_size=2048,
@@ -556,7 +559,7 @@ tiny_LLaMA = [
         time_mixer="attention",
         parameterization=None,
     ),
-    dict(
+    dict( # tiny_LLaMA_120M
         org="StatNLP-research",
         name="tiny_LLaMA_120M", # 121,129,728
         block_size=2048,
@@ -576,7 +579,7 @@ tiny_LLaMA = [
         time_mixer="attention",
         parameterization=None,
     ),
-    dict(
+    dict( # tiny_LLaMA_3b_SSM_O2
         org="StatNLP-research",
         name="tiny_LLaMA_3b_SSM_O2", # 
         block_size=2048,
@@ -597,7 +600,7 @@ tiny_LLaMA = [
         n_query_groups=4,
         time_mixer="ssm",
     ),
-    dict(
+    dict( # tiny_LLaMA_3b_SSM_O1
         org="StatNLP-research",
         name="tiny_LLaMA_3b_SSM_O1", # 2,461,369,200
         block_size=2048,
@@ -618,7 +621,7 @@ tiny_LLaMA = [
         n_query_groups=4,
         time_mixer="ssm",
     ),
-    dict(
+    dict( # tiny_LLaMA_1b_SSM_O1
         org="StatNLP-research",
         name="tiny_LLaMA_1b_SSM_O1", # 927,041,792
         block_size=2048,
@@ -639,7 +642,7 @@ tiny_LLaMA = [
         n_query_groups=4,
         time_mixer="ssm",
     ),
-    dict(
+    dict( # tiny_LLaMA_120M_SSM_O2
         org="StatNLP-research",
         name="tiny_LLaMA_120M_SSM_O2",  # 108,351,744
         block_size=2048,
@@ -660,7 +663,7 @@ tiny_LLaMA = [
         n_query_groups=1,
         time_mixer="ssm",
     ),
-    dict(
+    dict( # tiny_LLaMA_120M_SSM_O1
         org="StatNLP-research",
         name="tiny_LLaMA_120M_SSM_O1", # 108,155,136
         block_size=2048,
@@ -681,7 +684,7 @@ tiny_LLaMA = [
         n_query_groups=1,
         time_mixer="ssm",
     ),
-    dict(
+    dict( # LinearRNN
         org="StatNLP-research",
         name="tiny_LLaMA_120M_LinearRNN", # 112,881,408
         block_size=2048,
@@ -702,7 +705,7 @@ tiny_LLaMA = [
         n_query_groups=1,
         time_mixer="ssm",
     ),
-    dict(
+    dict( # code
         org="StatNLP-research",
         name="code_tiny_LLaMA_1b",
         block_size=8192,
@@ -720,6 +723,28 @@ tiny_LLaMA = [
         intermediate_size=5632,
         n_query_groups=4,
         condense_ratio= 4
+    ),
+    ##
+    # AttnSSM
+    dict( # tiny_LLaMA_120M
+        org="StatNLP-research",
+        name="tiny_LLaMA_120M_AttnSSM", # 121,129,728
+        block_size=2048,
+        vocab_size=32000,
+        padding_multiple=64,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=2048,
+        n_query_groups=1,
+        time_mixer="attnssm",
+        parameterization=None,
     ),
 ]
 configs.extend(tiny_LLaMA)

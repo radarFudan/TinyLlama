@@ -327,13 +327,14 @@ class CausalSelfAttentionSSM(nn.Module):
 
         self.config = config
 
+        print("In AttentionSSM, the parameterization used is", config.parameterization)
         self.stableSSMModel = StableSSMModel(
             rec1_size=config.n_embd,
             n_layers=1,
             dropout=0.2,
             dt=0.33,
             prenorm=False,
-            parameterization="best",  # this is a kernel_arg
+            parameterization=config.parameterization,  # this is a kernel_arg
             return_seq=True,
             )
 
