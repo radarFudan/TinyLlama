@@ -25,6 +25,7 @@ from lit_gpt.retnet_config import RetNetConfig
 from lit_gpt.stablessm import StableSSMModel
 
 import einops
+import copy
 
 class GPT(nn.Module):
     def __init__(self, config: Config) -> None:
@@ -334,14 +335,19 @@ class CausalSelfAttentionSSM(nn.Module):
 
         print("In AttentionSSM, the parameterization used is", config.parameterization)
         print("In AttentionSSM, the hidden dimension used is", 3 * config.n_head * config.head_size)
-        self.stableSSMModel = StableSSMModel(
-            rec1_size=3 * config.n_head * config.head_size,
-            n_layers=1,
-            dropout=0.2,
-            dt=0.33,
-            prenorm=False,
-            parameterization=config.parameterization,  # this is a kernel_arg
-            )
+        
+        # self.stableSSMModel = StableSSMModel(
+        #     rec1_size=3 * config.n_head * config.head_size,
+        #     n_layers=1,
+        #     dropout=0.2,
+        #     dt=0.33,
+        #     prenorm=False,
+        #     parameterization=config.parameterization,  # this is a kernel_arg
+        #     )
+        config_new = copy.deepcopy(config)
+        config_new.n_embd = 3 * config.n_head * config.head_size 
+        config_new.n_ssm = 3 * config.n_head * config.head_size
+        self.hyenaSSM = SSM_Hyena(config_new)
 
     def forward(
         self,
@@ -405,12 +411,17 @@ class CausalSelfAttentionSSM(nn.Module):
             v = cache_v.index_copy_(1, input_pos, v)
             kv_cache = k, v
 
+        # print("q.shape", q.shape)
+        # print("k.shape", k.shape)
+        # print("v.shape", v.shape)
         y = self.scaled_dot_product_attention(q, k, v, mask=mask)
 
-        y = y.reshape(B, T, C)  # re-assemble all head outputs side by side
+        # y = y.reshape(B, T, C)  # re-assemble all head outputs side by side
 
         # output projection
+        # print("y.shape", y.shape)
         y = self.proj(y) # # y (batch_size, seqlen, ) -> # y (batch_size, seqlen, nheads, headdim)
+        # print("y.shape", y.shape)
 
         return y, kv_cache
 
@@ -445,11 +456,14 @@ class CausalSelfAttentionSSM(nn.Module):
         # b, n, s, h = qkv.shape
         _, n, _, _ = qkv.shape
         qkv = einops.rearrange(qkv, "b n s h -> b s (n h)") # (batch_size, seqlen, 3 * nheads * headdim)
-        y = self.stableSSMModel(qkv) # y (batch_size, seqlen, 3 * nheads * headdim)
 
-        y = einops.rearrange(y, "b s (n h) -> b n s h", n = n, h = 3 * self.config.head_size) # y (batch_size, nheads, seqlen, 3 * headdim)
+        # y = self.stableSSMModel(qkv) # y (batch_size, seqlen, 3 * nheads * headdim)
+        y, _ = self.hyenaSSM(qkv, None, None) # y (batch_size, seqlen, 3 * nheads * headdim)
 
-        return y.transpose(1, 2) # y (batch_size, seqlen, nheads, 3 * headdim)
+        # y = einops.rearrange(y, "b s (n h) -> b n s h", n = n, h = 3 * self.config.head_size) # y (batch_size, nheads, seqlen, 3 * headdim)
+        # return y.transpose(1, 2) # y (batch_size, seqlen, nheads, 3 * headdim)
+
+        return y
 
 
 class SSM_Hyena(nn.Module):
