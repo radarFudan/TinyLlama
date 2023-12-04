@@ -339,6 +339,10 @@ class CausalSelfAttentionSSM(nn.Module):
         config_new = copy.deepcopy(config)
         config_new.n_ssm = 3 * config.head_size
         self.hyenaSSM = SSM_Hyena(config_new)
+        self.hyenaSSM2 = SSM_Hyena(config_new)
+        self.hyenaSSM3 = SSM_Hyena(config_new)
+        self.hyenaSSM4 = SSM_Hyena(config_new)
+        self.hyenaSSM_activation = nn.GELU()
 
     def forward(
         self,
@@ -404,7 +408,7 @@ class CausalSelfAttentionSSM(nn.Module):
 
         y = self.scaled_dot_product_attention(q, k, v, mask=mask)
 
-        y = y.reshape(B, T, 3 * C)  # re-assemble all head outputs side by side
+        y = y.reshape(B, T, -1)  # re-assemble all head outputs side by side
 
         # output projection
         y = self.proj(y)
@@ -440,6 +444,13 @@ class CausalSelfAttentionSSM(nn.Module):
         
         # y = self.stableSSMModel(qkv) # y (batch_size, seqlen, nheads * headdim)
         y = self.hyenaSSM(qkv) # y (batch_size, nheads, seqlen, 3 * headdim)
+        y = self.hyenaSSM_activation(y) # y (batch_size, nheads, seqlen, 3 * headdim)
+        y = self.hyenaSSM2(qkv) # y (batch_size, nheads, seqlen, 3 * headdim)
+        y = self.hyenaSSM_activation(y) # y (batch_size, nheads, seqlen, 3 * headdim)
+        y = self.hyenaSSM3(qkv) # y (batch_size, nheads, seqlen, 3 * headdim)
+        y = self.hyenaSSM_activation(y) # y (batch_size, nheads, seqlen, 3 * headdim)
+        y = self.hyenaSSM4(qkv) # y (batch_size, nheads, seqlen, 3 * headdim)
+        y = self.hyenaSSM_activation(y) # y (batch_size, nheads, seqlen, 3 * headdim)
 
         return y.transpose(1, 2) # y (batch_size, seqlen, nheads, 3 * headdim)
 
