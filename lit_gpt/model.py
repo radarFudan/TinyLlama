@@ -330,19 +330,19 @@ class CausalSelfAttentionSSM(nn.Module):
         self.attn = nn.Linear(config.n_embd, shape, bias=config.bias)
         # output projection
         # self.proj = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
-        self.proj = nn.Linear(3 * config.n_embd, config.n_embd, bias=config.bias)
+        self.proj = nn.Linear(1 * config.n_embd, config.n_embd, bias=config.bias)
 
         self.config = config
 
         print("In AttentionSSM, the hidden dimension for SSM_Hyena used is", 3 * config.head_size)
         
         config_new = copy.deepcopy(config)
-        config_new.n_ssm = 3 * config.head_size
+        config_new.n_ssm = 12 * config.head_size
         self.hyenaSSM = SSM_Hyena(config_new)
         self.hyenaSSM2 = SSM_Hyena(config_new)
-        self.hyenaSSM3 = SSM_Hyena(config_new)
-        self.hyenaSSM4 = SSM_Hyena(config_new)
         self.hyenaSSM_activation = nn.GELU()
+        self.in_proj = nn.Linear(3 * config.head_size, 12 * config.head_size, bias=config.bias)
+        self.out_proj = nn.Linear(12 * config.head_size, 1 * config.head_size, bias=config.bias)
 
     def forward(
         self,
@@ -442,17 +442,14 @@ class CausalSelfAttentionSSM(nn.Module):
         
         qkv = torch.cat((q, k, v), dim=-1) # q, k, v (batch_size, nheads, seqlen, 3 * headdim)
         
-        # y = self.stableSSMModel(qkv) # y (batch_size, seqlen, nheads * headdim)
-        y = self.hyenaSSM(qkv) # y (batch_size, nheads, seqlen, 3 * headdim)
-        y = self.hyenaSSM_activation(y) # y (batch_size, nheads, seqlen, 3 * headdim)
-        y = self.hyenaSSM2(qkv) # y (batch_size, nheads, seqlen, 3 * headdim)
-        y = self.hyenaSSM_activation(y) # y (batch_size, nheads, seqlen, 3 * headdim)
-        y = self.hyenaSSM3(qkv) # y (batch_size, nheads, seqlen, 3 * headdim)
-        y = self.hyenaSSM_activation(y) # y (batch_size, nheads, seqlen, 3 * headdim)
-        y = self.hyenaSSM4(qkv) # y (batch_size, nheads, seqlen, 3 * headdim)
-        y = self.hyenaSSM_activation(y) # y (batch_size, nheads, seqlen, 3 * headdim)
+        y = self.in_proj(qkv) # y (batch_size, nheads, seqlen, 12 * headdim)
+        y = self.hyenaSSM(y) 
+        y = self.hyenaSSM_activation(y)
+        y = self.hyenaSSM2(y) 
+        y = self.hyenaSSM_activation(y) 
+        y = self.out_proj(y) # y (batch_size, nheads, seqlen, 1 * headdim)
 
-        return y.transpose(1, 2) # y (batch_size, seqlen, nheads, 3 * headdim)
+        return y.transpose(1, 2) # y (batch_size, seqlen, nheads, 1 * headdim)
 
 
 class SSM_Hyena(nn.Module):
