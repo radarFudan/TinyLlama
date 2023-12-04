@@ -26,15 +26,18 @@ import random
 model_name = "tiny_LLaMA_120M_AttnSSM"
 name = model_name
 out_dir = Path("out") / name
-version = 13
+version = 16
 
 # Hyperparameters
 num_of_devices = 2
 global_batch_size = 16
 # learning_rate = 4e-4
-learning_rate = 8e-4
+# learning_rate = 8e-4
+# learning_rate = 16*1e-4
+learning_rate = 4e-4
 # micro_batch_size = 16
-micro_batch_size = 8
+# micro_batch_size = 8
+micro_batch_size = 4
 max_step = 715256
 warmup_steps = 1000
 log_step_interval = 100
@@ -92,7 +95,7 @@ def setup(
     devices: int = 2,
     train_data_dir: Path = Path("data/redpajama_sample"),
     val_data_dir: Optional[Path] = None,
-    precision: Optional[str] = None,
+    precision: Optional[str] = "32-true",
     tpu: bool = False,
     resume: Union[bool, Path] = False,
 ) -> None:
@@ -229,8 +232,21 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
         
         # determine and set the learning rate for this iteration
         lr = get_lr(state["iter_num"]) if decay_lr else learning_rate
+
+        # for param_group in optimizer.param_groups:
+        #     param_group["lr"] = lr
+        
+        decay_factor = 0.01
         for param_group in optimizer.param_groups:
-            param_group["lr"] = lr
+            # Check if "lambdas" is in the name of the param_group
+            if 'lambdas' in param_group['name']:
+                # Apply decay to the learning rate
+                param_group["lr"] = lr * decay_factor  # decay_factor is the rate at which you want to decay the learning rate
+            else:
+                param_group["lr"] = lr
+
+            # Print the name of the param_group and the new learning rate
+            print(f"Setting learning rate for {param_group['name']} to {param_group['lr']}")
 
         iter_t0 = time.perf_counter()
 
