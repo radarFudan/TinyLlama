@@ -26,7 +26,7 @@ import random
 model_name = "tiny_LLaMA_120M"
 name = model_name
 out_dir = Path("out") / name
-version = 7
+version = 8
 
 # Hyperparameters
 num_of_devices = 2
