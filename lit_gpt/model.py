@@ -27,6 +27,7 @@ from lit_gpt.stablessm import StableSSMModel
 import einops
 import copy
 
+
 class GPT(nn.Module):
     def __init__(self, config: Config) -> None:
         super().__init__()
@@ -324,7 +325,7 @@ class CausalSelfAttentionSSM(nn.Module):
         # key, query, value projections for all heads, but in a batch
         self.attn = nn.Linear(config.n_embd, shape, bias=config.bias)
         # output projection
-        self.proj = nn.Linear(3 * config.n_embd, config.n_embd, bias=config.bias)
+        self.proj = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
 
         self.config = config
 
@@ -336,17 +337,10 @@ class CausalSelfAttentionSSM(nn.Module):
         print("In AttentionSSM, the parameterization used is", config.parameterization)
         print("In AttentionSSM, the hidden dimension used is", 3 * config.n_head * config.head_size)
         
-        # self.stableSSMModel = StableSSMModel(
-        #     rec1_size=3 * config.n_head * config.head_size,
-        #     n_layers=1,
-        #     dropout=0.2,
-        #     dt=0.33,
-        #     prenorm=False,
-        #     parameterization=config.parameterization,  # this is a kernel_arg
-        #     )
         config_new = copy.deepcopy(config)
         config_new.n_embd = 3 * config.n_head * config.head_size 
         config_new.n_ssm = 3 * config.n_head * config.head_size
+        config_new.n_return = config.n_head * config.head_size
         self.hyenaSSM = SSM_Hyena(config_new)
 
     def forward(
@@ -411,17 +405,12 @@ class CausalSelfAttentionSSM(nn.Module):
             v = cache_v.index_copy_(1, input_pos, v)
             kv_cache = k, v
 
-        # print("q.shape", q.shape)
-        # print("k.shape", k.shape)
-        # print("v.shape", v.shape)
         y = self.scaled_dot_product_attention(q, k, v, mask=mask)
 
-        # y = y.reshape(B, T, C)  # re-assemble all head outputs side by side
+        y = y.reshape(B, T, C)  # re-assemble all head outputs side by side
 
         # output projection
-        # print("y.shape", y.shape)
         y = self.proj(y) # # y (batch_size, seqlen, ) -> # y (batch_size, seqlen, nheads, headdim)
-        # print("y.shape", y.shape)
 
         return y, kv_cache
 
@@ -441,11 +430,9 @@ class CausalSelfAttentionSSM(nn.Module):
         #     return flash_attn_func(q, k, v, dropout_p=0.0, softmax_scale=scale, causal=True)
 
         # q, k, v (batch_size, seqlen, nheads, headdim)
-
         q = q.transpose(1, 2)
         k = k.transpose(1, 2)
         v = v.transpose(1, 2)
-
         # q, k, v (batch_size, nheads, seqlen, headdim)
 
         if q.size() != k.size():
@@ -457,8 +444,8 @@ class CausalSelfAttentionSSM(nn.Module):
         _, n, _, _ = qkv.shape
         qkv = einops.rearrange(qkv, "b n s h -> b s (n h)") # (batch_size, seqlen, 3 * nheads * headdim)
 
-        # y = self.stableSSMModel(qkv) # y (batch_size, seqlen, 3 * nheads * headdim)
-        y, _ = self.hyenaSSM(qkv, None, None) # y (batch_size, seqlen, 3 * nheads * headdim)
+        # y = self.stableSSMModel(qkv) # y (batch_size, seqlen, nheads * headdim)
+        y, _ = self.hyenaSSM(qkv, None, None) # y (batch_size, seqlen, nheads * headdim)
 
         # y = einops.rearrange(y, "b s (n h) -> b n s h", n = n, h = 3 * self.config.head_size) # y (batch_size, nheads, seqlen, 3 * headdim)
         # return y.transpose(1, 2) # y (batch_size, seqlen, nheads, 3 * headdim)
@@ -473,9 +460,8 @@ class SSM_Hyena(nn.Module):
     def __init__(self, config: Config) -> None:
         super().__init__()
 
-        # self.lambdas = nn.Parameter(torch.rand(config.order, 1, 1, config.n_ssm))
-
         self.parameterization = config.parameterization
+
         lambdas_weights = torch.rand(config.order, 1, 1, config.n_ssm)
         if self.parameterization == "exp":
             lambdas = torch.log(lambdas_weights)
@@ -488,10 +474,6 @@ class SSM_Hyena(nn.Module):
         else:
             return ValueError(f"Unknown parameterization {self.parameterization}")
         self.register("lambdas", lambdas, 0.001)
-
-        # input/output projection
-        self.in_proj = nn.Linear(config.n_embd, config.n_ssm * config.order, bias=config.bias)
-        self.out_proj = nn.Linear(config.n_ssm, config.n_embd, bias=config.bias)
 
         self.D = nn.Linear(config.n_ssm, config.n_ssm, bias=config.bias)
 
@@ -514,7 +496,9 @@ class SSM_Hyena(nn.Module):
     ) -> Tuple[torch.Tensor, Optional[KVCache]]:
         
         B, T, _ = x.size()  # batch size, sequence length, embedding dimensionality (n_embd)
-        x = self.in_proj(x) # batch size, sequence length, order * n_ssm. 
+
+        # x = self.in_proj(x) # batch size, sequence length, order * n_ssm. 
+
         x = einops.rearrange(x, "b t (o c) -> o b t c", o = self.order, c = self.n_ssm) # order, batch size, sequence length, n_ssm
         O, _, _, C = x.size()  # order * batch size, sequence length, n_ssm
 
@@ -533,23 +517,9 @@ class SSM_Hyena(nn.Module):
         Lambda_elements = lambdas * torch.ones(1, 1, T, 1).to(self.lambdas.device) # O * B * T * C
 
         y = x[0,:,:,:] # B * T * C
-        
-        assert self.order >= 1
-        for i in range(1, self.order):
-            y = y * x[i, :, :, :] # Then it seems it would be difficult to approximate order one term? 
+        y = associative_scan(nested_func, (Lambda_elements[i,:,:,:], y), axis=1)[1] + self.D(y) # B * T * C
 
-            # TODO, currently bias term is shared across different orders
-            y = associative_scan(nested_func, (Lambda_elements[i,:,:,:], y), axis=1)[1] + self.D(y) # B * T * C
-
-            # TODO, Lambda_elements[0,:,:,:] is not used. 
-
-            y = self.filter_activation(y)
-
-        # output projection
-        y = self.activation(y) # It's identity. 
-        y = self.out_proj(y)
-
-        return y, kv_cache
+        return y
     
     def reset_parameters(self) -> None:
         print("reset_parameters called in SSM_Hyena, consider implement it and check the usage")

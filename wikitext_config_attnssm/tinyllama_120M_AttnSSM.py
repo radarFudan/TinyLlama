@@ -26,20 +26,20 @@ import random
 model_name = "tiny_LLaMA_120M_AttnSSM"
 name = model_name
 out_dir = Path("out") / name
-version = 5
+version = 7
 
 # Hyperparameters
 num_of_devices = 2
 global_batch_size = 16
-learning_rate = 1e-3
+learning_rate = 4e-4
 # micro_batch_size = 16
-micro_batch_size = 4
+micro_batch_size = 8
 max_step = 715256
 warmup_steps = 1000
 log_step_interval = 100
 eval_iters = 100
-save_step_interval = 20000
-eval_step_interval = 2000
+save_step_interval = 200
+eval_step_interval = 200
 
 
 weight_decay = 1e-1
