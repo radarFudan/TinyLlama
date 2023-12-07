@@ -46,7 +46,8 @@ save_step_interval = 200
 eval_step_interval = 200
 
 
-weight_decay = 1e-1
+# weight_decay = 1e-1
+weight_decay = 0.000
 beta1 = 0.9
 beta2 = 0.95
 grad_clip = 1.0
@@ -233,21 +234,9 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
         # determine and set the learning rate for this iteration
         lr = get_lr(state["iter_num"]) if decay_lr else learning_rate
 
-        # for param_group in optimizer.param_groups:
-        #     param_group["lr"] = lr
-        
-        decay_factor = 0.01
         for param_group in optimizer.param_groups:
-            # Check if "lambdas" is in the name of the param_group
-            if 'lambdas' in param_group['name']:
-                # Apply decay to the learning rate
-                param_group["lr"] = lr * decay_factor  # decay_factor is the rate at which you want to decay the learning rate
-            else:
-                param_group["lr"] = lr
-
-            # Print the name of the param_group and the new learning rate
-            print(f"Setting learning rate for {param_group['name']} to {param_group['lr']}")
-
+            param_group["lr"] = lr
+        
         iter_t0 = time.perf_counter()
 
         input_ids = train_data[:, 0 : model.config.block_size].contiguous()
