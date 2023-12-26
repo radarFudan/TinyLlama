@@ -178,8 +178,10 @@ class Block(nn.Module):
             self.attn = RetNetDecoder(retnet_config)
         elif config.time_mixer == "attnssm":
             self.attn = CausalSelfAttentionSSM(config)
-        elif config.time_mixer == "mamba":
+        elif config.time_mixer == "mamba": # Transformer - dot_product + mamba
             self.attn = CausalSelfAttentionMamba(config)
+        elif config.time_mixer == "pure_mamba": # Transformer - self_attention + mamba
+            self.attn = CausalSelfAttentionPureMamba(config)
         else:
             raise NotImplementedError(f"Time mixer {config.time_mixer} not implemented")
 
@@ -326,6 +328,38 @@ class CausalSelfAttention(nn.Module):
         return y.transpose(1, 2)
 
 
+class CausalSelfAttentionPureMamba(nn.Module):
+    def __init__(self, config: Config) -> None:
+        super().__init__()
+        
+        self.config = config
+
+        print("In AttentionPureMamba, the hidden dimension for PureMamba used is", config.n_embd)
+        
+        self.mamba = Mamba(
+            d_model=config.n_embd, # Model dimension d_model
+            d_state=16,  # SSM state expansion factor
+            d_conv=4,    # Local convolution width
+            expand=2,    # Block expansion factor
+        )
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        rope: RoPECache,
+        max_seq_length: int,
+        mask: Optional[torch.Tensor] = None,
+        input_pos: Optional[torch.Tensor] = None,
+        kv_cache: Optional[KVCache] = None,
+    ) -> Tuple[torch.Tensor, Optional[KVCache]]:
+        
+        # TODO
+        y = x
+        # y, hidden_state = self.mamba(x)
+
+        return y, kv_cache
+
+
 class CausalSelfAttentionMamba(nn.Module):
     def __init__(self, config: Config) -> None:
         super().__init__()
@@ -338,7 +372,7 @@ class CausalSelfAttentionMamba(nn.Module):
 
         self.config = config
 
-        print("In AttentionSSM, the hidden dimension for Mamba used is", 3 * config.head_size)
+        print("In AttentionMamba, the hidden dimension for Mamba used is", 3 * config.head_size)
         
         config_new = copy.deepcopy(config)
         config_new.n_ssm = 12 * config.head_size

@@ -772,6 +772,29 @@ tiny_LLaMA = [
         time_mixer="mamba",
         parameterization="best",
     ),
+    # PureMamba
+    dict( # tiny_LLaMA_120M
+        org="StatNLP-research",
+        name="tiny_LLaMA_120M_PureMamba", # 121,129,728
+        block_size=2048,
+        vocab_size=32000,
+        padding_multiple=64,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        n_ssm=768*3,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=2048,
+        # n_query_groups=1,
+        n_query_groups=12,
+        time_mixer="pure_mamba",
+        parameterization="best",
+    ),
 ]
 configs.extend(tiny_LLaMA)
 
