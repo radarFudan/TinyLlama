@@ -28,7 +28,7 @@ from dataloading import create_wikitext_dataset
 model_name = "tiny_LLaMA_120M_SSM_O2_safari"
 name = model_name
 out_dir = Path("out") / name
-version = 0
+version = 1
 
 # Hyperparameters
 num_of_devices = 1
@@ -38,7 +38,7 @@ micro_batch_size = 32
 max_step = 115000
 warmup_steps = 1000
 log_step_interval = 100
-eval_iters = 100
+eval_iters = 50
 save_step_interval = 5000
 eval_step_interval = 5000
 
@@ -329,8 +329,12 @@ def validate(fabric: L.Fabric, model: torch.nn.Module, val_dataloader: DataLoade
         # loss_func = FusedCrossEntropyLoss()
         # loss = loss_func(logits, targets)
         losses[k] = loss.item()
-        
-    out = losses.mean()
+      
+    if k >= eval_iters:    
+        out = losses.mean()
+    else:
+        print("eval total iters", k)
+        out = losses[:k].mean()
 
     model.train()
     return out

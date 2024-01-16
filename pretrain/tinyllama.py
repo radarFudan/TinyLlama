@@ -23,32 +23,29 @@ from pytorch_lightning.loggers import WandbLogger
 from lit_gpt import FusedCrossEntropyLoss
 import random
 
-from dataloading import create_wikitext_dataset
-
-model_name = "tiny_LLaMA_120M_Transformer"
-name = model_name
+model_name = "tiny_LLaMA_1b"
+name = "tinyllama_1b"
 out_dir = Path("out") / name
-version = 1
 
 # Hyperparameters
-num_of_devices = 1
-global_batch_size = 16
-learning_rate = 1e-3
-micro_batch_size = 16
-max_step = 115000
-warmup_steps = 1000
-log_step_interval = 100
-eval_iters = 50
+num_of_devices = 8
+global_batch_size = 512
+learning_rate = 4e-4
+micro_batch_size = 8
+max_step = 715256 * 2
+warmup_steps = 2000
+log_step_interval = 10
+eval_iters = 100
 save_step_interval = 5000
 eval_step_interval = 5000
 
 
-weight_decay = 0.25
+weight_decay = 1e-1
 beta1 = 0.9
-beta2 = 0.999 # 0.999 for wikitext
-grad_clip = 1.0 # It seems S5 does not apply this, safari use 1.0
+beta2 = 0.95
+grad_clip = 1.0
 decay_lr = True
-min_lr = 4e-5 # Not sure how to tune
+min_lr = 4e-5
 
 batch_size = global_batch_size // num_of_devices
 gradient_accumulation_steps = batch_size // micro_batch_size
@@ -65,35 +62,26 @@ log_iter_interval = log_step_interval * gradient_accumulation_steps
 
 # Treat all dataset equally by their size. If you want to use a different weight for a dataset, add it to the list with the weight.
 train_data_config = [
-    ("train_ind", 1.0),
+    ("train_slim", 0.693584),
+    ("train_star", 0.306416),
 ]
 
 val_data_config = [
-    ("train_ind", 1.0),
+    ("validation", 1.0),
 ]
 
 hparams = {k: v for k, v in locals().items() if isinstance(v, (int, float, str)) and not k.startswith("_")}
 logger = step_csv_logger("out", name, flush_logs_every_n_steps=log_iter_interval)
-
-import os
-import wandb
-def read_key_from_file(file_path):
-    with open(file_path, 'r') as file:
-        return file.read().strip()
-key_file_path = '/home/aiops/wangsd/TinyLlama_3/wandb_key.txt'
-wandb_key = read_key_from_file(key_file_path)
-wandb.login(key=wandb_key)
-wandb_logger = WandbLogger(name=f"{model_name}_v{version}", id=f"{model_name}_v{version}", project="TL1")
+wandb_logger = WandbLogger()
 
 
 def setup(
-    devices: int = 1,
+    devices: int = 8,
     train_data_dir: Path = Path("data/redpajama_sample"),
     val_data_dir: Optional[Path] = None,
     precision: Optional[str] = None,
     tpu: bool = False,
     resume: Union[bool, Path] = False,
-    use_wikitext: bool = False, 
 ) -> None:
     precision = precision or get_default_supported_precision(training=True, tpu=tpu)
 
@@ -116,10 +104,10 @@ def setup(
     fabric = L.Fabric(devices=devices, strategy=strategy, precision=precision, loggers=[logger, wandb_logger])
     fabric.print(hparams)
     #fabric.launch(main, train_data_dir, val_data_dir, resume)
-    main(fabric, train_data_dir, val_data_dir, resume, use_wikitext)
+    main(fabric, train_data_dir, val_data_dir, resume)
 
 
-def main(fabric, train_data_dir, val_data_dir, resume, use_wikitext):
+def main(fabric, train_data_dir, val_data_dir, resume):
     monitor = Monitor(fabric, window_size=2, time_unit="seconds", log_iter_interval=log_iter_interval)
 
     if fabric.global_rank == 0:
@@ -127,35 +115,30 @@ def main(fabric, train_data_dir, val_data_dir, resume, use_wikitext):
 
     config = Config.from_name(model_name)
 
-    if use_wikitext:
-        train_dataloader, val_dataloader, _ = create_wikitext_dataset(l_max=config.block_size, data_dir="./data/wikitext", batch_size=micro_batch_size, seed=0)
+    train_dataloader, val_dataloader = create_dataloaders(
+        batch_size=micro_batch_size,
+        block_size=config.block_size,
+        fabric=fabric,
+        train_data_dir=train_data_dir,
+        val_data_dir=val_data_dir,
+        seed=3407,
+    )
+    if val_dataloader is None:
+        train_dataloader = fabric.setup_dataloaders(train_dataloader)
     else:
-        train_dataloader, val_dataloader = create_dataloaders(
-            batch_size=micro_batch_size,
-            block_size=config.block_size,
-            fabric=fabric,
-            train_data_dir=train_data_dir,
-            val_data_dir=val_data_dir,
-            seed=3407,
-        )
-        if val_dataloader is None:
-            train_dataloader = fabric.setup_dataloaders(train_dataloader)
-        else:
-            train_dataloader, val_dataloader = fabric.setup_dataloaders(train_dataloader, val_dataloader)
+        train_dataloader, val_dataloader = fabric.setup_dataloaders(train_dataloader, val_dataloader)
 
     fabric.seed_everything(3407)  # same seed for every process to init model (FSDP)
 
     fabric.print(f"Loading model with {config.__dict__}")
     t0 = time.perf_counter()
-    with fabric.init_module(empty_init=(fabric.world_size > 1)):
+    with fabric.init_module(empty_init=False):
         model = GPT(config)
         model.apply(partial(model._init_weights ,n_layer=config.n_layer))
  
 
     fabric.print(f"Time to instantiate model: {time.perf_counter() - t0:.02f} seconds.")
     fabric.print(f"Total parameters {num_parameters(model):,}")
-
-    wandb_logger.watch(model, log="all", log_freq=1000)
 
     model = fabric.setup(model)
     optimizer = torch.optim.AdamW(
@@ -184,10 +167,7 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
     optimizer = state["optimizer"]
 
     if val_dataloader is not None:
-        t0 = time.perf_counter()
-        val_loss = validate(fabric, model, val_dataloader)  # sanity check
-        t1 = time.perf_counter() - t0
-        fabric.print(f"Sanity check, val loss {val_loss:.4f}, val time: {t1 * 1000:.2f}ms")
+        validate(fabric, model, val_dataloader)  # sanity check
 
     with torch.device("meta"):
         meta_model = GPT(model.config)
@@ -215,98 +195,83 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
     curr_iter = 0
             
     loss_func = FusedCrossEntropyLoss()
-    
-    device = "cuda:0"
-    
-    while state["iter_num"] < max_iters:
-        for  train_data in train_dataloader:
-            # resume loader state. This is not elegant but it works. Should rewrite it in the future.
-            if resume:
-                if curr_iter < initial_iter:
-                    curr_iter += 1
-                    continue
-                else:
-                    resume = False
-                    curr_iter = -1
-                    fabric.barrier()
-                    fabric.print("resume finished, taken {} seconds".format(time.perf_counter() - total_t0))
-            if state["iter_num"] >= max_iters:
-                break
-            
-            # determine and set the learning rate for this iteration
-            lr = get_lr(state["iter_num"]) if decay_lr else learning_rate
-            for param_group in optimizer.param_groups:
-                param_group["lr"] = lr
-
-            iter_t0 = time.perf_counter()
-
-            # input_ids = train_data[:, 0 : model.config.block_size].contiguous()
-            # targets = train_data[:, 1 : model.config.block_size + 1].contiguous()
-            input_ids = train_data[0].to(device).contiguous()
-            targets = train_data[1].to(device).contiguous()
-            if state["iter_num"]<10:
-                print("input_ids shape, targets shape", input_ids.size(), targets.size())
-            is_accumulating = (state["iter_num"] + 1) % gradient_accumulation_steps != 0
-            with fabric.no_backward_sync(model, enabled=is_accumulating):
-                logits = model(input_ids)
-                loss = loss_func(logits, targets)
-                # loss = chunked_cross_entropy(logits, targets, chunk_size=0)
-                fabric.backward(loss / gradient_accumulation_steps)
-
-            if not is_accumulating:
-                # Calculate the gradient norm
-                # total_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip)
-
-                # Print the gradient norm
-                # print("Gradient norm: ", total_norm)
-
-                fabric.clip_gradients(model, optimizer, max_norm=grad_clip)
-                optimizer.step()
-                optimizer.zero_grad()
-                state["step_count"] += 1
-            elif fabric.device.type == "xla":
-                xm.mark_step()
-            state["iter_num"] += 1
-            # input_id: B L 
-            total_lengths += input_ids.size(1)
-            t1 = time.perf_counter()
-            fabric.print(
-                    f"iter {state['iter_num']} step {state['step_count']}: loss {loss.item():.4f}, iter time:"
-                    f" {(t1 - iter_t0) * 1000:.2f}ms{' (optimizer.step)' if not is_accumulating else ''}"
-                    f" remaining time: {(t1 - total_t0) / (state['iter_num'] - initial_iter) * (max_iters - state['iter_num']) / 3600:.2f} hours. " 
-                    # print days as well
-                    f" or {(t1 - total_t0) / (state['iter_num'] - initial_iter) * (max_iters - state['iter_num']) / 3600 / 24:.2f} days. "
-                    # f"lr {lr}"
-                )
-    
-            monitor.on_train_batch_end(
-                state["iter_num"] * micro_batch_size,
-                t1 - total_t0,
-                # this assumes that device FLOPs are the same and that all devices have the same batch size
-                fabric.world_size,
-                state["step_count"],
-                flops_per_batch=estimated_flops,
-                lengths=total_lengths,
-                train_loss = loss.item()
-            )
-
-                
-                
-                
-            if val_dataloader is not None and not is_accumulating and state["step_count"] % eval_step_interval == 0:
-                
-                t0 = time.perf_counter()
-                val_loss = validate(fabric, model, val_dataloader)
-                t1 = time.perf_counter() - t0
-                monitor.eval_end(t1)
-                fabric.print(f"step {state['iter_num']}: val loss {val_loss:.4f}, val time: {t1 * 1000:.2f}ms")
-                fabric.log_dict({"metric/val_loss": val_loss.item(), "total_tokens": model.config.block_size * (state["iter_num"] + 1) * micro_batch_size * fabric.world_size}, state["step_count"])
-                fabric.log_dict({"metric/val_ppl": math.exp(val_loss.item()), "total_tokens": model.config.block_size * (state["iter_num"] + 1) * micro_batch_size * fabric.world_size}, state["step_count"])
+    for  train_data in train_dataloader:
+        # resume loader state. This is not elegant but it works. Should rewrite it in the future.
+        if resume:
+            if curr_iter < initial_iter:
+                curr_iter += 1
+                continue
+            else:
+                resume = False
+                curr_iter = -1
                 fabric.barrier()
-            if not is_accumulating and state["step_count"] % save_step_interval == 0:
-                checkpoint_path = out_dir / f"iter-{state['iter_num']:06d}-ckpt.pth"
-                fabric.print(f"Saving checkpoint to {str(checkpoint_path)!r}")
-                fabric.save(checkpoint_path, state)
+                fabric.print("resume finished, taken {} seconds".format(time.perf_counter() - total_t0))
+        if state["iter_num"] >= max_iters:
+            break
+        
+        # determine and set the learning rate for this iteration
+        lr = get_lr(state["iter_num"]) if decay_lr else learning_rate
+        for param_group in optimizer.param_groups:
+            param_group["lr"] = lr
+
+        iter_t0 = time.perf_counter()
+
+        input_ids = train_data[:, 0 : model.config.block_size].contiguous()
+        targets = train_data[:, 1 : model.config.block_size + 1].contiguous()
+        is_accumulating = (state["iter_num"] + 1) % gradient_accumulation_steps != 0
+        with fabric.no_backward_sync(model, enabled=is_accumulating):
+            logits = model(input_ids)
+            loss = loss_func(logits, targets)
+            # loss = chunked_cross_entropy(logits, targets, chunk_size=0)
+            fabric.backward(loss / gradient_accumulation_steps)
+
+        if not is_accumulating:
+            fabric.clip_gradients(model, optimizer, max_norm=grad_clip)
+            optimizer.step()
+            optimizer.zero_grad()
+            state["step_count"] += 1
+        elif fabric.device.type == "xla":
+            xm.mark_step()
+        state["iter_num"] += 1
+        # input_id: B L 
+        total_lengths += input_ids.size(1)
+        t1 = time.perf_counter()
+        fabric.print(
+                f"iter {state['iter_num']} step {state['step_count']}: loss {loss.item():.4f}, iter time:"
+                f" {(t1 - iter_t0) * 1000:.2f}ms{' (optimizer.step)' if not is_accumulating else ''}"
+                f" remaining time: {(t1 - total_t0) / (state['iter_num'] - initial_iter) * (max_iters - state['iter_num']) / 3600:.2f} hours. " 
+                # print days as well
+                f" or {(t1 - total_t0) / (state['iter_num'] - initial_iter) * (max_iters - state['iter_num']) / 3600 / 24:.2f} days. "
+            )
+ 
+        monitor.on_train_batch_end(
+            state["iter_num"] * micro_batch_size,
+            t1 - total_t0,
+            # this assumes that device FLOPs are the same and that all devices have the same batch size
+            fabric.world_size,
+            state["step_count"],
+            flops_per_batch=estimated_flops,
+            lengths=total_lengths,
+            train_loss = loss.item()
+        )
+
+            
+            
+            
+        if val_dataloader is not None and not is_accumulating and state["step_count"] % eval_step_interval == 0:
+            
+            t0 = time.perf_counter()
+            val_loss = validate(fabric, model, val_dataloader)
+            t1 = time.perf_counter() - t0
+            monitor.eval_end(t1)
+            fabric.print(f"step {state['iter_num']}: val loss {val_loss:.4f}, val time: {t1 * 1000:.2f}ms")
+            fabric.log_dict({"metric/val_loss": val_loss.item(), "total_tokens": model.config.block_size * (state["iter_num"] + 1) * micro_batch_size * fabric.world_size}, state["step_count"])
+            fabric.log_dict({"metric/val_ppl": math.exp(val_loss.item()), "total_tokens": model.config.block_size * (state["iter_num"] + 1) * micro_batch_size * fabric.world_size}, state["step_count"])
+            fabric.barrier()
+        if not is_accumulating and state["step_count"] % save_step_interval == 0:
+            checkpoint_path = out_dir / f"iter-{state['iter_num']:06d}-ckpt.pth"
+            fabric.print(f"Saving checkpoint to {str(checkpoint_path)!r}")
+            fabric.save(checkpoint_path, state)
 
         
 @torch.no_grad()
@@ -314,27 +279,20 @@ def validate(fabric: L.Fabric, model: torch.nn.Module, val_dataloader: DataLoade
     fabric.print("Validating ...")
     model.eval()
 
-    device = "cuda:0"
     losses = torch.zeros(eval_iters, device=fabric.device)
     for k, val_data in enumerate(val_dataloader):
         if k >= eval_iters:
             break
-        # input_ids = val_data[:, 0 : model.config.block_size].contiguous()
-        # targets = val_data[:, 1 : model.config.block_size + 1].contiguous()
-        input_ids = val_data[0].to(device).contiguous()
-        targets = val_data[1].to(device).contiguous()
-        logits = model(input_ids).to(device)
+        input_ids = val_data[:, 0 : model.config.block_size].contiguous()
+        targets = val_data[:, 1 : model.config.block_size + 1].contiguous()
+        logits = model(input_ids)
         loss = chunked_cross_entropy(logits, targets, chunk_size=0)
 
         # loss_func = FusedCrossEntropyLoss()
         # loss = loss_func(logits, targets)
         losses[k] = loss.item()
         
-    if k >= eval_iters:    
-        out = losses.mean()
-    else:
-        print("eval total iters", k)
-        out = losses[:k].mean()
+    out = losses.mean()
 
     model.train()
     return out

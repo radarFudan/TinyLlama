@@ -60,6 +60,10 @@ python scripts/prepare_slimpajama.py --source_path /home/aiops/wangsd/TinyLlama/
 python scripts/prepare_slimpajama.py --source_path /home/aiops/wangsd/TinyLlama/data/SlimPajama-627B --tokenizer_path data/llama  --destination_path /home/aiops/wangsd/TinyLlama/data/slim_star_combined --split validation --percentage 1.0
 
 python scripts/prepare_file.py --source_path /home/aiops/wangsd/TinyLlama/data/mix_sample --tokenizer_path data/llama --destination_path data/mix_sample_combined --split train --percentage 1.0
+
+python scripts/prepare_file.py --source_path /home/aiops/wangsd/TinyLlama/data/mix_sample --tokenizer_path data/mamba --destination_path data/mix_sample_combined_EleutherAI --split train --percentage 1.0
+
+python scripts/prepare_file.py --source_path /home/aiops/wangsd/TinyLlama/data/the_pile_deduplicated_EleutherAI --tokenizer_path data/mamba --destination_path data/the_pile_deduplicated_EleutherAI_combined --split train --percentage 1.0
 ```
 
 ### Pretraining

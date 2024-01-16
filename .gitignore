@@ -19,3 +19,9 @@ sft/wandb
 storage.sh
 du_report.txt
 **/*.txt
+
+/home/aiops/wangsd/TinyLlama/pretrain/tinyllama_WK1B_transformer.txt
+/home/aiops/wangsd/TinyLlama/pretrain/tinyllama_WK1B_S5.txt
+/home/aiops/wangsd/TinyLlama/pretrain/tinyllama_WK120M_transformer_safari.txt
+/home/aiops/wangsd/TinyLlama/pretrain/tinyllama_WK120M_transformer.txt
+/home/aiops/wangsd/TinyLlama/pretrain/tinyllama_WK120M_safari.txt

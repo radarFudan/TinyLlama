@@ -314,7 +314,7 @@ class CausalSSM(nn.Module):
 
         # self.lambdas = nn.Parameter(torch.rand(config.order, 1, 1, config.n_ssm))
 
-        self.parameterization = "exp"
+        self.parameterization = config.parameterization
         lambdas_weights = torch.rand(config.order, 1, 1, config.n_ssm)
         if self.parameterization == "exp":
             lambdas = torch.log(lambdas_weights)
@@ -326,7 +326,8 @@ class CausalSSM(nn.Module):
             lambdas = torch.sqrt(torch.maximum(1 / lambdas_weights - 1.0, 1e-6 * torch.ones_like(lambdas_weights)))
         else:
             return ValueError(f"Unknown parameterization {self.parameterization}")
-        self.register("lambdas", lambdas, 0.001)
+        self.register("lambdas", lambdas, 0.001) # 0.001 is the default learning rate for lambdas.
+        # self.register_parameter("lambdas", nn.Parameter(lambdas))
 
         # input/output projection
         self.in_proj = nn.Linear(config.n_embd, config.n_ssm * config.order, bias=config.bias)

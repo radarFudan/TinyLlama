@@ -26,5 +26,7 @@ if __name__ == "__main__":
     #                      "/data/hf_dataset/en_merge_sample")
     # split_file_to_chunks("../../slimpajama_en_60b.jsonl",
     #                     "/home/aiops/liuqian/TinyLlama/hf_dataset/slimpajama_en_60b")
-    split_file_to_chunks("/home/aiops/wangsd/mix_sample.jsonl",
-                        "/home/aiops/wangsd/TinyLlama/data/mix_sample")
+    # split_file_to_chunks("/home/aiops/wangsd/mix_sample.jsonl",
+    #                     "/home/aiops/wangsd/TinyLlama/data/mix_sample")
+    split_file_to_chunks("/home/aiops/wangsd/.cache/huggingface/hub/datasets--EleutherAI--the_pile_deduplicated/snapshots/fcbfcfde4222cbb1acd1d33bad0be250ee14b1bb/data",
+                        "/home/aiops/wangsd/TinyLlama/data/the_pile_deduplicated")

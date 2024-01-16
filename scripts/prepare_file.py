@@ -16,9 +16,17 @@ import lit_gpt.packed_dataset as packed_dataset
 from lit_gpt import Tokenizer
 
 # Filename for SlimPajama
+# slimpajama_sets = {
+#     "train": "train/*",
+#     "valid": "valid/*",
+# }
+
+# slimpajama_sets = {
+#     "data": "data/*",
+# }
+
 slimpajama_sets = {
     "train": "train/*",
-    "valid": "valid/*",
 }
 
 

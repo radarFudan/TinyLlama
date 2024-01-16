@@ -25,7 +25,7 @@ import random
 
 from dataloading import create_wikitext_dataset
 
-model_name = "tiny_LLaMA_120M_Transformer"
+model_name = "tiny_LLaMA_120M_SSM_O2_S5_best"
 name = model_name
 out_dir = Path("out") / name
 version = 1
@@ -36,7 +36,7 @@ global_batch_size = 16
 learning_rate = 1e-3
 micro_batch_size = 16
 max_step = 115000
-warmup_steps = 1000
+warmup_steps = 10
 log_step_interval = 100
 eval_iters = 50
 save_step_interval = 5000
@@ -83,7 +83,7 @@ def read_key_from_file(file_path):
 key_file_path = '/home/aiops/wangsd/TinyLlama_3/wandb_key.txt'
 wandb_key = read_key_from_file(key_file_path)
 wandb.login(key=wandb_key)
-wandb_logger = WandbLogger(name=f"{model_name}_v{version}", id=f"{model_name}_v{version}", project="TL1")
+wandb_logger = WandbLogger(name=f"{model_name}_v{version}", id=f"{model_name}_v{version}", project="TL1_rebuttal")
 
 
 def setup(

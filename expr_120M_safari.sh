@@ -3,4 +3,4 @@ CUDA_VISIBLE_DEVICES=0 lightning run model \
     --accelerator=cuda \
     --devices=1 \
     --num-nodes=1 \
-    pretrain/tinyllama_WK120M_safari.py --devices 1  --train_data_dir data/wikitext  --val_data_dir data/wikitext --use_wikitext True | tee ./pretrain/tinyllama_WK120M_safari.txt
+    pretrain/tinyllama_WK120M_safari.py --devices 1  --train_data_dir data/wikitext  --val_data_dir data/wikitext --use_wikitext True --resume True | tee -a ./pretrain/tinyllama_WK120M_safari.txt 

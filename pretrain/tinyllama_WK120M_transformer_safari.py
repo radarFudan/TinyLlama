@@ -25,15 +25,15 @@ import random
 
 from dataloading import create_wikitext_dataset
 
-model_name = "tiny_LLaMA_120M_Transformer"
+model_name = "tiny_LLaMA_120M_Transformer_safari"
 name = model_name
 out_dir = Path("out") / name
 version = 1
 
 # Hyperparameters
 num_of_devices = 1
-global_batch_size = 16
-learning_rate = 1e-3
+global_batch_size = 512
+learning_rate = 6e-4
 micro_batch_size = 16
 max_step = 115000
 warmup_steps = 1000
@@ -43,7 +43,7 @@ save_step_interval = 5000
 eval_step_interval = 5000
 
 
-weight_decay = 0.25
+weight_decay = 0.1
 beta1 = 0.9
 beta2 = 0.999 # 0.999 for wikitext
 grad_clip = 1.0 # It seems S5 does not apply this, safari use 1.0
