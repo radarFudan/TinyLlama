@@ -14,6 +14,9 @@ from flash_attn import flash_attn_func
 from lit_gpt.config import Config
 from xformers.ops import SwiGLU
 from .fused_rotary_embedding import apply_rotary_emb_func
+# from mamba_ssm import Mamba
+from mamba.mamba_ssm.modules.mamba_simple import Mamba
+
 RoPECache = Tuple[torch.Tensor, torch.Tensor]
 KVCache = Tuple[torch.Tensor, torch.Tensor]
 FlashAttention2Available = RequirementCache("flash-attn>=2.0.0.post1")
@@ -105,8 +108,9 @@ class GPT(nn.Module):
                 x, *_ = block(x, (cos, sin), max_seq_length)
         else:
             self.kv_caches = self.kv_caches or self.build_kv_caches(x, max_seq_length, cos.size(-1) * 2)
+            self.mamba_caches = self.mamba_caches or self.build_mamba_caches(x, max_seq_length, cos.size(-1) * 2)
             for i, block in enumerate(self.transformer.h):
-                x, self.kv_caches[i] = block(x, (cos, sin), max_seq_length, mask, input_pos, self.kv_caches[i])
+                x, self.kv_caches[i], self.mamba_caches[i] = block(x, (cos, sin), max_seq_length, mask, input_pos, self.kv_caches[i], self.mamba_caches[i])
 
         x = self.transformer.ln_f(x)
 
@@ -146,16 +150,39 @@ class GPT(nn.Module):
             for _ in range(self.config.n_layer)
         ]
 
+    def build_mamba_caches(self, idx: torch.Tensor, max_seq_length: int, rope_cache_length: int) -> List[KVCache]:
+        B = idx.size(0)
+
+        conv_state_shape = (B, 10)
+        ssm_state_shape = (B, 10)
+
+        device = idx.device
+        return [
+            (torch.zeros(conv_state_shape, device=device), torch.zeros(ssm_state_shape, device=device))
+            for _ in range(self.config.n_layer)
+        ]
+
 
 class Block(nn.Module):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.norm_1 = config.norm_class(config.n_embd, eps=config.norm_eps)
-        self.attn = CausalSelfAttention(config)
+
+        if config.backbone == "attn":
+            self.attn = CausalSelfAttention(config)
+        elif config.backbone == "mamba":
+            self.attn = Mamba(
+                d_model=768, # Model dimension d_model
+                d_state=16,  # SSM state expansion factor
+                d_conv=4,    # Local convolution width
+                expand=2,    # Block expansion factor
+            )
+
         if not config.shared_attention_norm:
             self.norm_2 = config.norm_class(config.n_embd, eps=config.norm_eps)
         self.mlp = config.mlp_class(config)
         self.config = config
+
     def forward(
         self,
         x: torch.Tensor,
@@ -164,10 +191,25 @@ class Block(nn.Module):
         mask: Optional[torch.Tensor] = None,
         input_pos: Optional[torch.Tensor] = None,
         kv_cache: Optional[KVCache] = None,
+        mamba_cache: Optional[KVCache] = None,
     ) -> Tuple[torch.Tensor, Optional[KVCache]]:
 
         n_1 = self.norm_1(x)
-        h, new_kv_cache = self.attn(n_1, rope, max_seq_length, mask, input_pos, kv_cache)
+
+        if self.config.backbone == "attn":
+            h, new_kv_cache, new_mamba_cache = self.attn(n_1, rope, max_seq_length, mask, input_pos, kv_cache, mamba_cache)
+        else:
+            if self.config.hidden_state_method == "zero":
+                h, _ = self.attn(n_1, mamba_cache=None)
+                new_kv_cache = kv_cache
+                new_mamba_cache = mamba_cache
+            elif self.config.hidden_state_method == "previous":
+                h, new_mamba_cache = self.attn(n_1, mamba_cache=mamba_cache)
+                new_kv_cache = kv_cache
+                pass
+            else: 
+                raise NotImplementedError(f"hidden_state_method {self.config.hidden_state_method} not implemented")
+
         if self.config.parallel_residual:
             n_2 = n_1 if self.config.shared_attention_norm else self.norm_2(x)
             x = x + h + self.mlp(n_2)
@@ -180,7 +222,7 @@ class Block(nn.Module):
             
             x = x + h
             x = x + self.mlp(self.norm_2(x))
-        return x, new_kv_cache
+        return x, new_kv_cache, new_mamba_cache
 
 
 class CausalSelfAttention(nn.Module):
@@ -202,6 +244,7 @@ class CausalSelfAttention(nn.Module):
         mask: Optional[torch.Tensor] = None,
         input_pos: Optional[torch.Tensor] = None,
         kv_cache: Optional[KVCache] = None,
+        mamba_cache: Optional[KVCache] = None,
     ) -> Tuple[torch.Tensor, Optional[KVCache]]:
         B, T, C = x.size()  # batch size, sequence length, embedding dimensionality (n_embd)
 
@@ -263,7 +306,7 @@ class CausalSelfAttention(nn.Module):
         # output projection
         y = self.proj(y)
 
-        return y, kv_cache
+        return y, kv_cache, mamba_cache
 
     def scaled_dot_product_attention(
         self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, mask: Optional[torch.Tensor] = None

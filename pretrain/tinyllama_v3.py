@@ -24,27 +24,27 @@ from lit_gpt import FusedCrossEntropyLoss
 import random
 
 # model_name = "tiny_LLaMA_1b"
-model_name = "tiny_LLaMA_120m"
+model_name = "tiny_Mamba_120m_p"
 # name = "tinyllama_1b"
-name = "tinyllama_120m"
+name = "tiny_Mamba_120m_p"
 out_dir = Path("out") / name
-version = 0
+version = 2
 
 # Hyperparameters
 num_of_devices = 8
-global_batch_size = 512
-learning_rate = 4e-4
+global_batch_size = 256
+learning_rate = 6e-4
 micro_batch_size = 8
-max_step = 715256 * 2
-warmup_steps = 2000
-log_step_interval = 10
+max_step = 4800
+warmup_steps = 48
+log_step_interval = 4
 eval_iters = 100
-save_step_interval = 5000
-eval_step_interval = 5000
+save_step_interval = 400
+eval_step_interval = 400
 
 
 weight_decay = 1e-1
-weight_decay = 0.000
+# weight_decay = 0.000
 beta1 = 0.9
 beta2 = 0.95
 grad_clip = 1.0

@@ -50,6 +50,9 @@ class Config:
     intermediate_size: Optional[int] = None
     condense_ratio: int = 1
 
+    backbone: str = "attn"
+    hidden_state_method: str = "zero"
+
     def __post_init__(self):
         # error checking
         assert self.n_embd % self.n_head == 0
@@ -249,7 +252,8 @@ tiny_LLaMA = [
         org="StatNLP-research",
         name="tiny_LLaMA_1b",
         block_size=2048,
-        vocab_size=32000,
+        # vocab_size=32000,
+        vocab_size=50432,
         padding_multiple=64,
         n_layer=22,
         n_head=32,
@@ -265,9 +269,10 @@ tiny_LLaMA = [
     ),
     dict(
         org="StatNLP-research",
-        name="tiny_LLaMA_120M",
+        name="tiny_LLaMA_120m",
         block_size=2048,
-        vocab_size=32000,
+        # vocab_size=32000,
+        vocab_size=50432,
         padding_multiple=64,
         n_layer=12,
         n_head=12,
@@ -280,6 +285,50 @@ tiny_LLaMA = [
         _mlp_class="LLaMAMLP",
         intermediate_size=2048,
         n_query_groups=1,
+        backbone="attn",
+        hidden_state_method=None,
+    ),
+    dict(
+        org="StatNLP-research",
+        name="tiny_Mamba_120m",
+        block_size=2048,
+        # vocab_size=32000,
+        vocab_size=50432,
+        padding_multiple=64,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=2048,
+        n_query_groups=1,
+        backbone="mamba",
+        hidden_state_method="zero",
+    ),
+    dict(
+        org="StatNLP-research",
+        name="tiny_Mamba_120m_p",
+        block_size=2048,
+        # vocab_size=32000,
+        vocab_size=50432,
+        padding_multiple=64,
+        n_layer=12,
+        n_head=12,
+        n_embd=768,
+        rotary_percentage=1.0,
+        parallel_residual=False,
+        bias=False,
+        _norm_class="FusedRMSNorm",
+        norm_eps=1e-5,
+        _mlp_class="LLaMAMLP",
+        intermediate_size=2048,
+        n_query_groups=1,
+        backbone="mamba",
+        hidden_state_method="previous",
     ),
     dict(
         org="StatNLP-research",
