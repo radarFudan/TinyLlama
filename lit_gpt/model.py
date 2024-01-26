@@ -15,7 +15,7 @@ from lit_gpt.config import Config
 from xformers.ops import SwiGLU
 from .fused_rotary_embedding import apply_rotary_emb_func
 # from mamba_ssm import Mamba
-from mamba.mamba_ssm.modules.mamba_simple import Mamba
+from mamba_ssm.modules.mamba_simple import Mamba
 
 RoPECache = Tuple[torch.Tensor, torch.Tensor]
 KVCache = Tuple[torch.Tensor, torch.Tensor]
@@ -39,6 +39,7 @@ class GPT(nn.Module):
         self.rope_cache: Optional[RoPECache] = None
         self.mask_cache: Optional[torch.Tensor] = None
         self.kv_caches: List[KVCache] = []
+        self.mamba_caches: List[KVCache] = []
 
     def _init_weights(self, module: nn.Module, n_layer) -> None:
         """Meant to be used with `gpt.apply(gpt._init_weights)`."""
@@ -103,14 +104,19 @@ class GPT(nn.Module):
         # forward the model itself
         x = self.transformer.wte(idx)  # token embeddings of shape (b, t, n_embd)
             
+
+        self.mamba_caches = self.mamba_caches or self.build_mamba_caches(x, max_seq_length, cos.size(-1) * 2)
+        # print("mamba_cache, finish build")
+        # print("mamba_cache, finish build", self.mamba_caches)
+
+
         if not use_kv_cache:
-            for block in self.transformer.h:
-                x, *_ = block(x, (cos, sin), max_seq_length)
+            for i, block in enumerate(self.transformer.h):
+                x, _, self.mamba_caches[i] = block(x, (cos, sin), max_seq_length, mamba_cache=self.mamba_caches[i])
         else:
             self.kv_caches = self.kv_caches or self.build_kv_caches(x, max_seq_length, cos.size(-1) * 2)
-            self.mamba_caches = self.mamba_caches or self.build_mamba_caches(x, max_seq_length, cos.size(-1) * 2)
             for i, block in enumerate(self.transformer.h):
-                x, self.kv_caches[i], self.mamba_caches[i] = block(x, (cos, sin), max_seq_length, mask, input_pos, self.kv_caches[i], self.mamba_caches[i])
+                x, self.kv_caches[i], self.mamba_caches[i] = block(x, (cos, sin), max_seq_length, mask, input_pos, self.kv_caches[i], mamba_cache=self.mamba_caches[i])
 
         x = self.transformer.ln_f(x)
 
@@ -153,12 +159,20 @@ class GPT(nn.Module):
     def build_mamba_caches(self, idx: torch.Tensor, max_seq_length: int, rope_cache_length: int) -> List[KVCache]:
         B = idx.size(0)
 
-        conv_state_shape = (B, 10)
-        ssm_state_shape = (B, 10)
+        d_model, expand, d_conv, d_state = 768, 2, 4, 16
+        conv_state_shape = (B, d_model * expand, d_conv)
+        ssm_state_shape = (B, d_model * expand, d_state)
 
         device = idx.device
+        dtype = idx.dtype
+        print()
+        print("In model.py")
+        print("The device is: ", device)
+        print("The dtype is: ", dtype)
+        print()
         return [
-            (torch.zeros(conv_state_shape, device=device), torch.zeros(ssm_state_shape, device=device))
+            (torch.zeros(conv_state_shape, device=device, dtype=dtype), 
+             torch.zeros(ssm_state_shape, device=device, dtype=dtype))
             for _ in range(self.config.n_layer)
         ]
 
@@ -176,6 +190,7 @@ class Block(nn.Module):
                 d_state=16,  # SSM state expansion factor
                 d_conv=4,    # Local convolution width
                 expand=2,    # Block expansion factor
+                use_fast_path=True, # Fused kernel options
             )
 
         if not config.shared_attention_norm:
@@ -198,9 +213,10 @@ class Block(nn.Module):
 
         if self.config.backbone == "attn":
             h, new_kv_cache, new_mamba_cache = self.attn(n_1, rope, max_seq_length, mask, input_pos, kv_cache, mamba_cache)
-        else:
+        elif self.config.backbone == "mamba":
+            # print("current mamba_cache", mamba_cache)
             if self.config.hidden_state_method == "zero":
-                h, _ = self.attn(n_1, mamba_cache=None)
+                h, _ = self.attn(n_1, mamba_cache=mamba_cache)
                 new_kv_cache = kv_cache
                 new_mamba_cache = mamba_cache
             elif self.config.hidden_state_method == "previous":
@@ -209,6 +225,8 @@ class Block(nn.Module):
                 pass
             else: 
                 raise NotImplementedError(f"hidden_state_method {self.config.hidden_state_method} not implemented")
+        else:
+            raise NotImplementedError(f"backbone {self.config.backbone} not implemented")
 
         if self.config.parallel_residual:
             n_2 = n_1 if self.config.shared_attention_norm else self.norm_2(x)
