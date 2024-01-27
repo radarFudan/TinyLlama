@@ -66,7 +66,7 @@ class GPT(nn.Module):
             self.mask_cache = None
 
     def forward(
-        self, idx: torch.Tensor, max_seq_length: Optional[int] = None, input_pos: Optional[torch.Tensor] = None
+        self, idx: torch.Tensor, max_seq_length: Optional[int] = None, input_pos: Optional[torch.Tensor] = None, reset_hiddens=None
     ) -> torch.Tensor:
         B, T = idx.size()
         use_kv_cache = input_pos is not None
@@ -108,6 +108,10 @@ class GPT(nn.Module):
         self.mamba_caches = self.mamba_caches or self.build_mamba_caches(x, max_seq_length, cos.size(-1) * 2)
         # print("mamba_cache, finish build")
         # print("mamba_cache, finish build", self.mamba_caches)
+        
+        if reset_hiddens:
+            self.mamba_caches = self.build_mamba_caches(x, max_seq_length, cos.size(-1) * 2)
+            print("mamba_cache, reset")
 
 
         if not use_kv_cache:
@@ -207,6 +211,7 @@ class Block(nn.Module):
         input_pos: Optional[torch.Tensor] = None,
         kv_cache: Optional[KVCache] = None,
         mamba_cache: Optional[KVCache] = None,
+        reset_hiddens=None, 
     ) -> Tuple[torch.Tensor, Optional[KVCache]]:
 
         n_1 = self.norm_1(x)
@@ -222,7 +227,6 @@ class Block(nn.Module):
             elif self.config.hidden_state_method == "previous":
                 h, new_mamba_cache = self.attn(n_1, mamba_cache=mamba_cache)
                 new_kv_cache = kv_cache
-                pass
             else: 
                 raise NotImplementedError(f"hidden_state_method {self.config.hidden_state_method} not implemented")
         else:

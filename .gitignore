@@ -17,3 +17,5 @@ sft/output
 sft/wandb
 mamba
 scripts_logs
+mamba_own
+causal_conv1d_own

@@ -26,12 +26,12 @@ import random
 # model_name = "tiny_LLaMA_1b"
 model_name = "tiny_Mamba_120m_p"
 # name = "tinyllama_1b"
-name = "tiny_Mamba_120m_p_slow_DEBUG"
+name = "tiny_Mamba_120m_p_slow"
 out_dir = Path("out") / name
-version = 3
+version = 4
 
 # Hyperparameters
-num_of_devices = 1
+num_of_devices = 8
 global_batch_size = 256
 learning_rate = 6e-4
 # micro_batch_size = 8
@@ -102,7 +102,7 @@ wandb_logger = WandbLogger(name=f"{model_name}_v{version}", id=f"{model_name}_v{
 
 
 def setup(
-    devices: int = 1,
+    devices: int = 8,
     train_data_dir: Path = Path("data/redpajama_sample"),
     val_data_dir: Optional[Path] = None,
     precision: Optional[str] = None,

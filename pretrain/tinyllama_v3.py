@@ -26,16 +26,17 @@ import random
 # model_name = "tiny_LLaMA_1b"
 model_name = "tiny_Mamba_120m_p"
 # name = "tinyllama_1b"
-name = "tiny_Mamba_120m_p"
+name = "tiny_Mamba_120m_p_slow_DEBUG"
 out_dir = Path("out") / name
 version = 3
 
 # Hyperparameters
 num_of_devices = 8
 global_batch_size = 256
-learning_rate = 6e-4
+# learning_rate = 6e-4
+learning_rate = 3e-4
 # micro_batch_size = 8
-micro_batch_size = 4
+micro_batch_size = 2
 max_step = 4800
 warmup_steps = 48
 log_step_interval = 4

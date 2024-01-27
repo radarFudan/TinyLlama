@@ -26,16 +26,16 @@ import random
 # model_name = "tiny_LLaMA_1b"
 model_name = "tiny_Mamba_120m_p"
 # name = "tinyllama_1b"
-name = "tiny_Mamba_120m_p_slow_DEBUG"
+name = "tiny_Mamba_120m_p_slow"
 out_dir = Path("out") / name
-version = 3
+version = 6
 
 # Hyperparameters
-num_of_devices = 1
+num_of_devices = 8
 global_batch_size = 256
 learning_rate = 6e-4
 # micro_batch_size = 8
-micro_batch_size = 2
+micro_batch_size = 1
 max_step = 4800
 warmup_steps = 48
 log_step_interval = 4
@@ -50,7 +50,8 @@ beta1 = 0.9
 beta2 = 0.95
 grad_clip = 1.0
 decay_lr = True
-min_lr = 4e-5
+# min_lr = 4e-5
+min_lr = 1e-5
 
 batch_size = global_batch_size // num_of_devices
 gradient_accumulation_steps = batch_size // micro_batch_size
@@ -102,7 +103,7 @@ wandb_logger = WandbLogger(name=f"{model_name}_v{version}", id=f"{model_name}_v{
 
 
 def setup(
-    devices: int = 1,
+    devices: int = 8,
     train_data_dir: Path = Path("data/redpajama_sample"),
     val_data_dir: Optional[Path] = None,
     precision: Optional[str] = None,
@@ -228,6 +229,7 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
     curr_iter = 0
             
     loss_func = FusedCrossEntropyLoss()
+    last_targets = None
     for  train_data in train_dataloader:
         # resume loader state. This is not elegant but it works. Should rewrite it in the future.
         if resume:
@@ -239,6 +241,10 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
                 curr_iter = -1
                 fabric.barrier()
                 fabric.print("resume finished, taken {} seconds".format(time.perf_counter() - total_t0))
+        
+        if state["step_count"] <= 4:
+            print(train_data)
+
         if state["iter_num"] >= max_iters:
             break
         
@@ -251,12 +257,24 @@ def train(fabric, state, train_dataloader, val_dataloader, monitor, resume):
 
         input_ids = train_data[:, 0 : model.config.block_size].contiguous()
         targets = train_data[:, 1 : model.config.block_size + 1].contiguous()
+
+        eps = 1e-2
         is_accumulating = (state["iter_num"] + 1) % gradient_accumulation_steps != 0
         with fabric.no_backward_sync(model, enabled=is_accumulating):
-            logits = model(input_ids)
+            reset_hiddens = True
+            if last_targets is not None:
+                # Compute the norm of the difference
+                diff_norm = torch.max(torch.abs(last_targets - input_ids[:, :1]))
+                if diff_norm > 0:
+                    print("reset hiddens")
+                    reset_hiddens = True
+                else:
+                    reset_hiddens = False
+            logits = model(input_ids, reset_hiddens=reset_hiddens)
             loss = loss_func(logits, targets)
             # loss = chunked_cross_entropy(logits, targets, chunk_size=0)
             fabric.backward(loss / gradient_accumulation_steps)
+        last_targets = targets[:, -1:].contiguous()
 
         if not is_accumulating:
             # total_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip)
@@ -344,7 +362,7 @@ def create_dataloader(
     for prefix, _ in data_config:
         filenames = sorted(glob.glob(str(data_dir / f"{prefix}*")))
         random.seed(seed)
-        random.shuffle(filenames)
+        # random.shuffle(filenames)
 
         dataset = PackedDataset(
             filenames,
