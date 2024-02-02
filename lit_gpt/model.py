@@ -66,7 +66,7 @@ class GPT(nn.Module):
             self.mask_cache = None
 
     def forward(
-        self, idx: torch.Tensor, max_seq_length: Optional[int] = None, input_pos: Optional[torch.Tensor] = None, reset_hiddens=None
+        self, idx: torch.Tensor, max_seq_length: Optional[int] = None, input_pos: Optional[torch.Tensor] = None, reset_hiddens=False
     ) -> torch.Tensor:
         B, T = idx.size()
         use_kv_cache = input_pos is not None
@@ -78,8 +78,8 @@ class GPT(nn.Module):
             assert (
                 max_seq_length >= T
             ), f"Cannot forward sequence of length {T}, max seq length is only {max_seq_length}"
-        assert max_seq_length <= block_size, f"Cannot attend to {max_seq_length}, block size is only {block_size}"
-        assert block_size >= T, f"Cannot forward sequence of length {T}, block size is only {block_size}"
+        # assert max_seq_length <= block_size, f"Cannot attend to {max_seq_length}, block size is only {block_size}"
+        # assert block_size >= T, f"Cannot forward sequence of length {T}, block size is only {block_size}"
 
         if self.rope_cache is None:
             self.rope_cache = self.build_rope_cache(idx)
@@ -105,13 +105,13 @@ class GPT(nn.Module):
         x = self.transformer.wte(idx)  # token embeddings of shape (b, t, n_embd)
             
 
-        self.mamba_caches = self.mamba_caches or self.build_mamba_caches(x, max_seq_length, cos.size(-1) * 2)
+        self.mamba_caches = self.mamba_caches or self.build_mamba_caches(x)
         # print("mamba_cache, finish build")
         # print("mamba_cache, finish build", self.mamba_caches)
         
         if reset_hiddens:
-            self.mamba_caches = self.build_mamba_caches(x, max_seq_length, cos.size(-1) * 2)
             print("mamba_cache, reset")
+            self.mamba_caches = self.build_mamba_caches(x)
 
 
         if not use_kv_cache:
@@ -160,20 +160,20 @@ class GPT(nn.Module):
             for _ in range(self.config.n_layer)
         ]
 
-    def build_mamba_caches(self, idx: torch.Tensor, max_seq_length: int, rope_cache_length: int) -> List[KVCache]:
+    def build_mamba_caches(self, idx: torch.Tensor) -> List[KVCache]:
         B = idx.size(0)
 
         d_model, expand, d_conv, d_state = 768, 2, 4, 16
-        conv_state_shape = (B, d_model * expand, d_conv)
+        conv_state_shape = (B, d_model * expand, d_conv - 1)
         ssm_state_shape = (B, d_model * expand, d_state)
 
         device = idx.device
         dtype = idx.dtype
-        print()
-        print("In model.py")
-        print("The device is: ", device)
-        print("The dtype is: ", dtype)
-        print()
+        # print()
+        # print("In model.py")
+        # print("The device is: ", device)
+        # print("The dtype is: ", dtype)
+        # print()
         return [
             (torch.zeros(conv_state_shape, device=device, dtype=dtype), 
              torch.zeros(ssm_state_shape, device=device, dtype=dtype))
@@ -196,6 +196,8 @@ class Block(nn.Module):
                 expand=2,    # Block expansion factor
                 use_fast_path=True, # Fused kernel options
             )
+        else:
+            raise NotImplementedError(f"backbone {config.backbone} not implemented")
 
         if not config.shared_attention_norm:
             self.norm_2 = config.norm_class(config.n_embd, eps=config.norm_eps)
@@ -220,15 +222,16 @@ class Block(nn.Module):
             h, new_kv_cache, new_mamba_cache = self.attn(n_1, rope, max_seq_length, mask, input_pos, kv_cache, mamba_cache)
         elif self.config.backbone == "mamba":
             # print("current mamba_cache", mamba_cache)
+            # print("n_1 shape", n_1.shape)
             if self.config.hidden_state_method == "zero":
                 h, _ = self.attn(n_1, mamba_cache=mamba_cache)
-                new_kv_cache = kv_cache
                 new_mamba_cache = mamba_cache
             elif self.config.hidden_state_method == "previous":
                 h, new_mamba_cache = self.attn(n_1, mamba_cache=mamba_cache)
-                new_kv_cache = kv_cache
             else: 
                 raise NotImplementedError(f"hidden_state_method {self.config.hidden_state_method} not implemented")
+            
+            new_kv_cache = kv_cache
         else:
             raise NotImplementedError(f"backbone {self.config.backbone} not implemented")
 
